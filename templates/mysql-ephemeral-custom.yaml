@@ -14,11 +14,8 @@ metadata:
     iconClass: icon-mysql-database
     tags: database,mysql
   creationTimestamp: 2016-07-07T02:21:52Z
-  name: mysql-ephemeral
-  namespace: openshift
-  resourceVersion: "5915968"
-  selfLink: /oapi/v1/namespaces/openshift/templates/mysql-ephemeral
-  uid: 90fba2d0-43e9-11e6-b8d2-22ac95594225
+  name: mysql-ephemeral-custom
+  namespace: john-tests
 objects:
 - apiVersion: v1
   kind: Service
