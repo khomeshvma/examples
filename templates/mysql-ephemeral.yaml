@@ -6,7 +6,7 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: mysql-ephemeral-template
+  template: mysql-ephemeral-custom-template
 metadata:
   annotations:
     description: 'MySQL database service, without persistent storage. WARNING: Any
