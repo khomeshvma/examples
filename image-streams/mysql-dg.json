@@ -2,7 +2,7 @@
     "kind": "ImageStream",
     "apiVersion": "v1",
     "metadata": {
-        "name": "mysql",
+        "name": "mysql-dg",
         "generation": 7,
         "creationTimestamp": null,
         "annotations": {
