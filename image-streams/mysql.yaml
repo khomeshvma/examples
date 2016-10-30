@@ -5,34 +5,34 @@ metadata:
   creationTimestamp: null
 spec:
   tags:
-  - name: latest
-    annotations:
+  - annotations:
       description: Provides a MySQL database on CentOS 7. For more information about using this database image see http://docs.thedigitalgarage.io/using_images/db_images/mysql.html.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of MySQL, including major versions updates.
       openshift.io/display-name: MySQL:latest
       tags: mysql,db
       iconClass: icon-mysql-database
-      supports: mysql:5.6,mysql
+      supports: "mysql:5.6",mysql
       version: latest
     from:
       kind: ImageStreamTag
-      name: 5.6
-  - name: 5.6
-    annotations:
+      name: "5.6"
+    name: latest
+  - annotations:
       description: Provides a MySQL database on CentOS 7. For more information about using this database image see http://docs.thedigitalgarage.io/using_images/db_images/mysql.html.
-      openshift.io/display-name: MySQL:5.6
+      openshift.io/display-name: "MySQL:5.6"
       tags: mysql,db
       iconClass: icon-mysql-database
-      version: 5.6
+      version: "5.6"
     from:
       kind: DockerImage
       name: thedigitalgarage/mysql-56-centos7:latest
-  - name: 5.5
-    annotations:
+    name: "5.6"
+  - annotations:
       description: Provides a MySQL database on CentOS 7. For more information about using this database image see http://docs.thedigitalgarage.io/using_images/db_images/mysql.html.
-      openshift.io/display-name: MySQL:5.5
+      openshift.io/display-name: "MySQL:5.5"
       tags: mysql,db
       iconClass: icon-mysql-database
-      version: 5.5
+      version: "5.5"
     from:
       kind: DockerImage
       name: thedigitalgarage/mysql-55-centos7:latest
+    name: "5.5"
