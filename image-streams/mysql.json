@@ -1,0 +1,57 @@
+{
+    "kind": "ImageStream",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "mysql",
+        "generation": 7,
+        "creationTimestamp": null,
+        "annotations": {
+            "openshift.io/image.dockerRepositoryCheck": "2016-09-27T16:42:40Z"
+        }
+    },
+    "spec": {
+        "tags": [
+            {
+                "name": "5.5",
+                "annotations": {
+                    "description": "Provides a MySQL v5.5 database",
+                    "iconClass": "icon-mysql-database",
+                    "tags": "mysql",
+                    "version": "5.5"
+                },
+                "from": {
+                    "kind": "DockerImage",
+                    "name": "thedigitalgarage/mysql-55-centos7"
+                }
+            },
+            {
+                "name": "5.6",
+                "annotations": {
+                    "description": "Provides a MySQL v5.6 database",
+                    "iconClass": "icon-mysql-database",
+                    "tags": "mysql",
+                    "version": "5.6"
+                },
+                "from": {
+                    "kind": "DockerImage",
+                    "name": "thedigitalgarage/mysql-56-centos7"
+                }
+            },
+            {
+                "name": "latest",
+                "annotations": {
+                    "description": "Provides a MySQL database",
+                    "iconClass": "icon-mysql-database",
+                    "tags": "mysql"
+                },
+                "from": {
+                    "kind": "DockerImage",
+                    "name": "thedigitalgarage/mysql:latest"
+                }
+            }
+        ]
+    },
+    "status": {
+        "dockerImageRepository": ""
+    }
+}
