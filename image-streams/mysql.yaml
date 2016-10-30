@@ -1,37 +1,35 @@
-kind: ImageStream
 apiVersion: v1
+kind: ImageStream
 metadata:
-  name: mysql
+  annotations:
   creationTimestamp: null
+  generation: 7
+  name: mysql
 spec:
   tags:
   - annotations:
-      description: "Provides a MySQL database on CentOS 7. For more information about using this database image see http://docs.thedigitalgarage.io/using_images/db_images/mysql.html.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of MySQL, including major versions updates."
-      openshift.io/display-name: MySQL:latest
-      tags: mysql,db
+      description: Provides a MySQL database on CentOS 7. For more information about using this database image see http://docs.thedigitalgarage.io/using_images/db_images/mysql.html.
       iconClass: icon-mysql-database
-      version: latest
+      tags: mysql,db
+      version: "5.5"
     from:
-      kind: ImageStreamTag
-      name: "5.6"
-    name: latest
+      kind: DockerImage
+      name: thedigitalgarage/mysql-55-centos7:latest
+    name: "5.5"
   - annotations:
       description: Provides a MySQL database on CentOS 7. For more information about using this database image see http://docs.thedigitalgarage.io/using_images/db_images/mysql.html.
-      openshift.io/display-name: "MySQL:5.6"
-      tags: mysql,db
       iconClass: icon-mysql-database
+      tags: mysql,db
       version: "5.6"
     from:
       kind: DockerImage
       name: thedigitalgarage/mysql-56-centos7:latest
     name: "5.6"
   - annotations:
-      description: Provides a MySQL database on CentOS 7. For more information about using this database image see http://docs.thedigitalgarage.io/using_images/db_images/mysql.html.
-      openshift.io/display-name: "MySQL:5.5"
-      tags: mysql,db
+      description: Provides a MySQL database on CentOS 7. For more information about using this database image see http://docs.thedigitalgarage.io/using_images/db_images/mysql.html.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of MySQL including major versions updates.
       iconClass: icon-mysql-database
-      version: "5.5"
+      tags: mysql
     from:
       kind: DockerImage
-      name: thedigitalgarage/mysql-55-centos7:latest
-    name: "5.5"
+      name: thedigitalgarage/mysql-56-centos7:latest
+    name: latest
