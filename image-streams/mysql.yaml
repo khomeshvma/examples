@@ -10,7 +10,6 @@ spec:
       openshift.io/display-name: MySQL:latest
       tags: mysql,db
       iconClass: icon-mysql-database
-      supports: "mysql:5.6",mysql
       version: latest
     from:
       kind: ImageStreamTag
