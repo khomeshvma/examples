@@ -1,0 +1,148 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+
+apiVersion: v1
+kind: Template
+labels:
+  template: mysql-ephemeral-template
+metadata:
+  annotations:
+    description: 'MySQL database service, without persistent storage. WARNING: Any
+      data stored will be lost upon pod destruction. Only use this template for testing'
+    iconClass: icon-mysql-database
+    tags: database,mysql
+  creationTimestamp: 2016-07-07T02:21:52Z
+  name: mysql-ephemeral
+  namespace: openshift
+  resourceVersion: "5915968"
+  selfLink: /oapi/v1/namespaces/openshift/templates/mysql-ephemeral
+  uid: 90fba2d0-43e9-11e6-b8d2-22ac95594225
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: ${DATABASE_SERVICE_NAME}
+  spec:
+    portalIP: ""
+    ports:
+    - name: mysql
+      nodePort: 0
+      port: 3306
+      protocol: TCP
+      targetPort: 3306
+    selector:
+      name: ${DATABASE_SERVICE_NAME}
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: ${DATABASE_SERVICE_NAME}
+  spec:
+    replicas: 1
+    selector:
+      name: ${DATABASE_SERVICE_NAME}
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          name: ${DATABASE_SERVICE_NAME}
+      spec:
+        containers:
+        - capabilities: {}
+          env:
+          - name: MYSQL_USER
+            value: ${MYSQL_USER}
+          - name: MYSQL_PASSWORD
+            value: ${MYSQL_PASSWORD}
+          - name: MYSQL_DATABASE
+            value: ${MYSQL_DATABASE}
+          image: ' '
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            initialDelaySeconds: 30
+            tcpSocket:
+              port: 3306
+            timeoutSeconds: 1
+          name: mysql
+          ports:
+          - containerPort: 3306
+            protocol: TCP
+          readinessProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -i
+              - -c
+              - MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER -D $MYSQL_DATABASE
+                -e 'SELECT 1'
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: ${MEMORY_LIMIT}
+          securityContext:
+            capabilities: {}
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          volumeMounts:
+          - mountPath: /var/lib/mysql/data
+            name: ${DATABASE_SERVICE_NAME}-data
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - emptyDir:
+            medium: ""
+          name: ${DATABASE_SERVICE_NAME}-data
+    triggers:
+    - imageChangeParams:
+        automatic: false
+        containerNames:
+        - mysql-dg
+        from:
+          kind: ImageStreamTag
+          name: mysql-dg:5.6
+          namespace: ${NAMESPACE}
+        lastTriggeredImage: ""
+      type: ImageChange
+    - type: ConfigChange
+  status: {}
+parameters:
+- description: Maximum amount of memory the container can use.
+  displayName: Memory Limit
+  name: MEMORY_LIMIT
+  value: 512Mi
+- description: The OpenShift Namespace where the ImageStream resides.
+  displayName: Namespace
+  name: NAMESPACE
+  value: openshift
+- description: The name of the OpenShift Service exposed for the database.
+  displayName: Database Service Name
+  name: DATABASE_SERVICE_NAME
+  required: true
+  value: mysql
+- description: Username for MySQL user that will be used for accessing the database.
+  displayName: MySQL Connection Username
+  from: user[A-Z0-9]{3}
+  generate: expression
+  name: MYSQL_USER
+  required: true
+- description: Password for the MySQL connection user.
+  displayName: MySQL Connection Password
+  from: '[a-zA-Z0-9]{16}'
+  generate: expression
+  name: MYSQL_PASSWORD
+  required: true
+- description: Name of the MySQL database accessed.
+  displayName: MySQL Database Name
+  name: MYSQL_DATABASE
+  required: true
+  value: sampledb
