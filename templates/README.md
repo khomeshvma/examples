@@ -1,7 +1,7 @@
 # Example Templates
 
 This repository contains example Templates for common images on the Digital Garage. For more information about Templates 
-how to use them, see the official Digital Garage documentation on [Image Streams](http://docs-test-digitalgarage-docs.apps.thedigitalgarage.io/architecture/core_concepts/templates.html)
+how to use them, see the official Digital Garage documentation on [templates](http://docs-test-digitalgarage-docs.apps.thedigitalgarage.io/architecture/core_concepts/templates.html)
 
 To deploy an Image Stream to your project on Digital Garage use the following command from the Digital Garage CLI in your project:
 
