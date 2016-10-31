@@ -261,7 +261,7 @@ parameters:
   value: wordpress
 - description: The URL of the repository with your application source code
   name: SOURCE_REPOSITORY_URL
-  value: https://github.com/getupcloud/wordpress-ex.git
+  value: https://github.com/thedigitalgarage/dg-wordpress-instant-app.git
 - description: Set this to a branch name, tag or other ref of your repository if you
     are not using the default branch
   name: SOURCE_REPOSITORY_REF
@@ -310,6 +310,6 @@ parameters:
   name: WORDPRESS_SECRET_TOKEN
 - description: Volume space available for data
   name: VOLUME_CAPACITY
-  displayName: 'Tamanho do Volume de dados [select:5Gi=5GB:10Gi=10GB:20Gi=20GB]'
+  displayName: 'Data Volume Size [select:5Gi=5GB:10Gi=10GB:20Gi=20GB]'
   required: true
   value: 1Gi
