@@ -7,7 +7,7 @@ spec:
   - annotations:
       description: Nginx-1.8 static server
       getup.io/display-name: Nginx 1.8
-      sampleRepo: https://github.com/getupcloud/nginx-ex.git
+      sampleRepo: https://github.com/thedigitalgarage/nginx-ex.git
       iconClass: icon-nginx
       supports: nginx:1.8,nginx
       tags: builder,nginx
@@ -19,7 +19,7 @@ spec:
   - annotations:
       description: Nginx-1.6 static server
       getup.io/display-name: Nginx 1.6
-      sampleRepo: https://github.com/getupcloud/nginx-ex.git
+      sampleRepo: https://github.com/thedigitalgarage/nginx-ex.git
       iconClass: icon-nginx
       supports: nginx:1.6,nginx
       tags: builder,nginx
