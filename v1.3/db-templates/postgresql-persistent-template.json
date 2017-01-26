@@ -6,27 +6,16 @@
     "creationTimestamp": null,
     "annotations": {
       "openshift.io/display-name": "PostgreSQL (Persistent)",
-      "description": "PostgreSQL database service, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/postgresql-container/blob/master/9.5.\n\nNOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.",
+      "description": "PostgreSQL database service, with persistent storage. For more information about using this template, including Digital Garage considerations, see https://github.com/thedigitalgarage/dg-postgresql-container/blob/master/9.5.\n\nNOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.",
       "iconClass": "icon-postgresql",
       "tags": "database,postgresql"
     }
   },
-  "message": "The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.\n\n       Username: ${POSTGRESQL_USER}\n       Password: ${POSTGRESQL_PASSWORD}\n  Database Name: ${POSTGRESQL_DATABASE}\n Connection URL: mysql://${DATABASE_SERVICE_NAME}:5432/\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/sclorg/postgresql-container/blob/master/9.5.",
+  "message": "The following service(s) have been created in your project: ${DATABASE_SERVICE_NAME}.\n\n       Username: ${POSTGRESQL_USER}\n       Password: ${POSTGRESQL_PASSWORD}\n  Database Name: ${POSTGRESQL_DATABASE}\n Connection URL: mysql://${DATABASE_SERVICE_NAME}:5432/\n\nFor more information about using this template, including Digital Garage considerations, see https://github.com/thedigitalgarage/dg-postgresql-container/blob/master/9.5.",
   "labels": {
     "template": "postgresql-persistent-template"
   },
   "objects": [
-    {
-      "kind": "Secret",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${DATABASE_SERVICE_NAME}"
-      },
-      "stringData" : {
-        "database-user" : "${POSTGRESQL_USER}",
-        "database-password" : "${POSTGRESQL_PASSWORD}"
-      }
-    },
     {
       "kind": "Service",
       "apiVersion": "v1",
@@ -141,21 +130,11 @@
                 "env": [
                   {
                     "name": "POSTGRESQL_USER",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${DATABASE_SERVICE_NAME}",
-                        "key" : "database-user"
-                      }
-                    }
+                    "value": "${POSTGRESQL_USER}"
                   },
                   {
                     "name": "POSTGRESQL_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${DATABASE_SERVICE_NAME}",
-                        "key" : "database-password"
-                      }
-                    }
+                    "value": "${POSTGRESQL_PASSWORD}"
                   },
                   {
                     "name": "POSTGRESQL_DATABASE",
