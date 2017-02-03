@@ -2,31 +2,19 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "nodejs-mongodb-example",
+    "name": "qs-nodejs-mongo",
     "annotations": {
-      "openshift.io/display-name": "Node.js + MongoDB (Ephemeral)",
-      "description": "An example Node.js application with a MongoDB database. For more information about using this template, including Digital Garage considerations, see https://github.com/thedigitalgarage/nodejs-ex/blob/master/README.md.\n\nWARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.",
-      "tags": "quickstart,nodejs",
+      "openshift.io/display-name": "Node.js, Express.js, AngularJS and MongoDB (The MEAN Stack)",
+      "description": "An example AngularJS appliction, Node.js/Express.js server and MongoDB database. For more information about using this quickstart template, including Digital Garage considerations, see https://github.com/thedigitalgarage/nodejs-ex/blob/master/README.md.\n\nWARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.",
+      "tags": "quickstart,nodejs,express,mongodb",
       "iconClass": "icon-nodejs"
     }
   },
   "message": "The following service(s) have been created in your project: ${NAME}, ${DATABASE_SERVICE_NAME}.\n\nFor more information about using this template, including Digital Garage considerations, see https://github.com/thedigitalgarage/nodejs-ex/blob/master/README.md.",
   "labels": {
-    "template": "nodejs-mongodb-example"
+    "template": "qs-nodejs-mongo"
   },
   "objects": [
-    {
-      "kind": "Secret",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${NAME}"
-      },
-      "stringData": {
-        "databaseUser": "${DATABASE_USER}",
-        "databasePassword": "${DATABASE_PASSWORD}",
-        "databaseAdminPassword" : "${DATABASE_ADMIN_PASSWORD}"
-      }
-    },
     {
       "kind": "Service",
       "apiVersion": "v1",
@@ -97,8 +85,8 @@
           "sourceStrategy": {
             "from": {
               "kind": "ImageStreamTag",
-              "namespace": "${NAMESPACE}",
-              "name": "nodejs:4"
+              "namespace": "openshift",
+              "name": "centos7-s2i-nodejs:latest"
             },
             "env": [
               {
@@ -158,7 +146,7 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "nodejs-mongodb-example"
+                "qs-nodejs-mongo"
               ],
               "from": {
                 "kind": "ImageStreamTag",
@@ -184,7 +172,7 @@
           "spec": {
             "containers": [
               {
-                "name": "nodejs-mongodb-example",
+                "name": "qs-nodejs-mongo",
                 "image": " ",
                 "ports": [
                   {
@@ -198,21 +186,11 @@
                   },
                   {
                     "name": "MONGODB_USER",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "databaseUser"
-                      }
-                    }
+                    "value": "${MONGODB_USER}"
                   },
                   {
                     "name": "MONGODB_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "databasePassword"
-                      }
-                    }
+                    "value": "${MONGODB_PASSWORD}"
                   },
                   {
                     "name": "MONGODB_DATABASE",
@@ -220,30 +198,9 @@
                   },
                   {
                     "name": "MONGODB_ADMIN_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "databaseAdminPassword"
-                      }
-                    }
+                    "value": "${MONGODB_ADMIN_PASSWORD}"
                   }
                 ],
-                "readinessProbe": {
-                  "timeoutSeconds": 3,
-                  "initialDelaySeconds": 3,
-                  "httpGet": {
-                    "path": "/pagecount",
-                    "port": 8080
-                  }
-                },
-                "livenessProbe": {
-                  "timeoutSeconds": 3,
-                  "initialDelaySeconds": 30,
-                  "httpGet": {
-                    "path": "/pagecount",
-                    "port": 8080
-                  }
-                },
                 "resources": {
                   "limits": {
                     "memory": "${MEMORY_LIMIT}"
@@ -300,7 +257,7 @@
               ],
               "from": {
                 "kind": "ImageStreamTag",
-                "namespace": "${NAMESPACE}",
+                "namespace": "openshift",
                 "name": "mongodb:3.2"
               }
             }
@@ -333,21 +290,11 @@
                 "env": [
                   {
                     "name": "MONGODB_USER",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "databaseUser"
-                      }
-                    }
+                    "value": "${MONGODB_USER}"
                   },
                   {
                     "name": "MONGODB_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "databasePassword"
-                      }
-                    }
+                    "value": "${MONGODB_PASSWORD}"
                   },
                   {
                     "name": "MONGODB_DATABASE",
@@ -355,12 +302,7 @@
                   },
                   {
                     "name": "MONGODB_ADMIN_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "databaseAdminPassword"
-                      }
-                    }
+                    "value": "${MONGODB_ADMIN_PASSWORD}"
                   }
                 ],
                 "readinessProbe": {
@@ -414,14 +356,7 @@
       "displayName": "Name",
       "description": "The name assigned to all of the frontend objects defined in this template.",
       "required": true,
-      "value": "nodejs-mongodb-example"
-    },
-    {
-      "name": "NAMESPACE",
-      "displayName": "Namespace",
-      "description": "The OpenShift Namespace where the ImageStream resides.",
-      "required": true,
-      "value": "openshift"
+      "value": "qs-nodejs-mongo"
     },
     {
       "name": "MEMORY_LIMIT",

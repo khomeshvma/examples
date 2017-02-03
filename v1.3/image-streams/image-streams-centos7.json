@@ -18,11 +18,11 @@
             "name": "latest",
             "annotations": {
               "openshift.io/display-name": "Ruby (Latest)",
-              "description": "Build and run Ruby applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-ruby-container/tree/master/2.3/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Ruby available on OpenShift, including major versions updates.",
+              "description": "Build and run Ruby applications on CentOS 7. For more information about using this builder image, including Digital Garage considerations, see https://github.com/thedigitalgarage/s2i-ruby-container/tree/master/2.3/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Ruby available on thedigitalgarage, including major versions updates.",
               "iconClass": "icon-ruby",
               "tags": "builder,ruby",
               "supports": "ruby",
-              "sampleRepo": "https://github.com/openshift/ruby-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/ruby-ex.git"
             },
             "from": {
               "kind": "ImageStreamTag",
@@ -33,12 +33,12 @@
             "name": "2.0",
             "annotations": {
               "openshift.io/display-name": "Ruby 2.0",
-              "description": "Build and run Ruby 2.0 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-ruby-container/tree/master/2.0/README.md.",
+              "description": "Build and run Ruby 2.0 applications on CentOS 7. For more information about using this builder image, including Digital Garage considerations, see https://github.com/thedigitalgarage/s2i-ruby-container/tree/master/2.0/README.md.",
               "iconClass": "icon-ruby",
               "tags": "hidden,builder,ruby",
               "supports": "ruby:2.0,ruby",
               "version": "2.0",
-              "sampleRepo": "https://github.com/openshift/ruby-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/ruby-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -49,12 +49,12 @@
             "name": "2.2",
             "annotations": {
               "openshift.io/display-name": "Ruby 2.2",
-              "description": "Build and run Ruby 2.2 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-ruby-container/tree/master/2.2/README.md.",
+              "description": "Build and run Ruby 2.2 applications on CentOS 7. For more information about using this builder image, including Digital Garage considerations, see https://github.com/thedigitalgarage/s2i-ruby-container/tree/master/2.2/README.md.",
               "iconClass": "icon-ruby",
               "tags": "builder,ruby",
               "supports": "ruby:2.2,ruby",
               "version": "2.2",
-              "sampleRepo": "https://github.com/openshift/ruby-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/ruby-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -65,12 +65,12 @@
             "name": "2.3",
             "annotations": {
               "openshift.io/display-name": "Ruby 2.3",
-              "description": "Build and run Ruby 2.3 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-ruby-container/blob/master/2.3/README.md.",
+              "description": "Build and run Ruby 2.3 applications on CentOS 7. For more information about using this builder image, including Digital Garage considerations, see https://github.com/thedigitalgarage/s2i-ruby-container/blob/master/2.3/README.md.",
               "iconClass": "icon-ruby",
               "tags": "builder,ruby",
               "supports": "ruby:2.3,ruby",
               "version": "2.3",
-              "sampleRepo": "https://github.com/openshift/ruby-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/ruby-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -95,11 +95,11 @@
             "name": "latest",
             "annotations": {
               "openshift.io/display-name": "Node.js (Latest)",
-              "description": "Build and run Node.js applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-nodejs-container/blob/master/4/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Node.js available on OpenShift, including major versions updates.",
+              "description": "Build and run Node.js applications on CentOS 7. For more information about using this builder image, including Digital Garage considerations, see https://github.com/thedigitalgarage/s2i-nodejs-container/blob/master/4/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Node.js available on thedigitalgarage, including major versions updates.",
               "iconClass": "icon-nodejs",
               "tags": "builder,nodejs",
               "supports":"nodejs",
-              "sampleRepo": "https://github.com/openshift/nodejs-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/nodejs-ex.git"
             },
             "from": {
               "kind": "ImageStreamTag",
@@ -110,12 +110,12 @@
             "name": "0.10",
             "annotations": {
               "openshift.io/display-name": "Node.js 0.10",
-              "description": "DEPRECATED: Build and run Node.js 0.10 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-nodejs-container/blob/master/0.10/README.md.",
+              "description": "DEPRECATED: Build and run Node.js 0.10 applications on CentOS 7. For more information about using this builder image, including Digital Garage considerations, see https://github.com/thedigitalgarage/s2i-nodejs-container/blob/master/0.10/README.md.",
               "iconClass": "icon-nodejs",
               "tags": "hidden,nodejs",
               "supports":"nodejs:0.10,nodejs:0.1,nodejs",
               "version": "0.10",
-              "sampleRepo": "https://github.com/openshift/nodejs-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/nodejs-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -126,7 +126,7 @@
             "name": "4",
             "annotations": {
               "openshift.io/display-name": "Node.js 4",
-              "description": "Build and run Node.js 4 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-nodejs-container/blob/master/4/README.md.",
+              "description": "Build and run Node.js 4 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-nodejs-container/blob/master/4/README.md.",
               "iconClass": "icon-nodejs",
               "tags": "builder,nodejs",
               "supports":"nodejs:4,nodejs",
@@ -156,11 +156,11 @@
             "name": "latest",
             "annotations": {
               "openshift.io/display-name": "Perl (Latest)",
-              "description": "Build and run Perl applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-perl-container/blob/master/5.20/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Perl available on OpenShift, including major versions updates.",
+              "description": "Build and run Perl applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-perl-container/blob/master/5.20/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Perl available on OpenShift, including major versions updates.",
               "iconClass": "icon-perl",
               "tags": "builder,perl",
               "supports":"perl",
-              "sampleRepo": "https://github.com/openshift/dancer-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/dancer-ex.git"
             },
             "from": {
               "kind": "ImageStreamTag",
@@ -171,12 +171,12 @@
             "name": "5.16",
             "annotations": {
               "openshift.io/display-name": "Perl 5.16",
-              "description": "Build and run Perl 5.16 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-perl-container/blob/master/5.16/README.md.",
+              "description": "Build and run Perl 5.16 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-perl-container/blob/master/5.16/README.md.",
               "iconClass": "icon-perl",
               "tags": "hidden,builder,perl",
               "supports":"perl:5.16,perl",
               "version": "5.16",
-              "sampleRepo": "https://github.com/openshift/dancer-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/dancer-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -187,12 +187,12 @@
             "name": "5.20",
             "annotations": {
               "openshift.io/display-name": "Perl 5.20",
-              "description": "Build and run Perl 5.20 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-perl-container/blob/master/5.20/README.md.",
+              "description": "Build and run Perl 5.20 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-perl-container/blob/master/5.20/README.md.",
               "iconClass": "icon-perl",
               "tags": "builder,perl",
               "supports":"perl:5.20,perl",
               "version": "5.20",
-              "sampleRepo": "https://github.com/openshift/dancer-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/dancer-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -203,12 +203,12 @@
             "name": "5.24",
             "annotations": {
               "openshift.io/display-name": "Perl 5.24",
-              "description": "Build and run Perl 5.24 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-perl-container/blob/master/5.24/README.md.",
+              "description": "Build and run Perl 5.24 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-perl-container/blob/master/5.24/README.md.",
               "iconClass": "icon-perl",
               "tags": "builder,perl",
               "supports":"perl:5.24,perl",
               "version": "5.24",
-              "sampleRepo": "https://github.com/openshift/dancer-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/dancer-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -233,11 +233,11 @@
             "name": "latest",
             "annotations": {
               "openshift.io/display-name": "PHP (Latest)",
-              "description": "Build and run PHP applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/5.6/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of PHP available on OpenShift, including major versions updates.",
+              "description": "Build and run PHP applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-php-container/blob/master/5.6/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of PHP available on OpenShift, including major versions updates.",
               "iconClass": "icon-php",
               "tags": "builder,php",
               "supports":"php",
-              "sampleRepo": "https://github.com/openshift/cakephp-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/cakephp-ex.git"
             },
             "from": {
               "kind": "ImageStreamTag",
@@ -248,12 +248,12 @@
             "name": "5.5",
             "annotations": {
               "openshift.io/display-name": "PHP 5.5",
-              "description": "Build and run PHP 5.5 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/5.5/README.md.",
+              "description": "Build and run PHP 5.5 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-php-container/blob/master/5.5/README.md.",
               "iconClass": "icon-php",
               "tags": "hidden,builder,php",
               "supports":"php:5.5,php",
               "version": "5.5",
-              "sampleRepo": "https://github.com/openshift/cakephp-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/cakephp-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -264,12 +264,12 @@
             "name": "5.6",
             "annotations": {
               "openshift.io/display-name": "PHP 5.6",
-              "description": "Build and run PHP 5.6 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/5.6/README.md.",
+              "description": "Build and run PHP 5.6 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-php-container/blob/master/5.6/README.md.",
               "iconClass": "icon-php",
               "tags": "builder,php",
               "supports":"php:5.6,php",
               "version": "5.6",
-              "sampleRepo": "https://github.com/openshift/cakephp-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/cakephp-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -280,12 +280,12 @@
             "name": "7.0",
             "annotations": {
               "openshift.io/display-name": "PHP 7.0",
-              "description": "Build and run PHP 7.0 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/7.0/README.md.",
+              "description": "Build and run PHP 7.0 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-php-container/blob/master/7.0/README.md.",
               "iconClass": "icon-php",
               "tags": "builder,php",
               "supports":"php:7.0,php",
               "version": "7.0",
-              "sampleRepo": "https://github.com/openshift/cakephp-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/cakephp-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -310,11 +310,11 @@
             "name": "latest",
             "annotations": {
               "openshift.io/display-name": "Python (Latest)",
-              "description": "Build and run Python applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-python-container/blob/master/3.5/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Python available on OpenShift, including major versions updates.",
+              "description": "Build and run Python applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-python-container/blob/master/3.5/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Python available on OpenShift, including major versions updates.",
               "iconClass": "icon-python",
               "tags": "builder,python",
               "supports":"python",
-              "sampleRepo": "https://github.com/openshift/django-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/django-ex.git"
             },
             "from": {
               "kind": "ImageStreamTag",
@@ -325,12 +325,12 @@
             "name": "3.3",
             "annotations": {
               "openshift.io/display-name": "Python 3.3",
-              "description": "Build and run Python 3.3 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-python-container/blob/master/3.3/README.md.",
+              "description": "Build and run Python 3.3 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-python-container/blob/master/3.3/README.md.",
               "iconClass": "icon-python",
               "tags": "hidden,builder,python",
               "supports":"python:3.3,python",
               "version": "3.3",
-              "sampleRepo": "https://github.com/openshift/django-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/django-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -341,12 +341,12 @@
             "name": "2.7",
             "annotations": {
               "openshift.io/display-name": "Python 2.7",
-              "description": "Build and run Python 2.7 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-python-container/blob/master/2.7/README.md.",
+              "description": "Build and run Python 2.7 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-python-container/blob/master/2.7/README.md.",
               "iconClass": "icon-python",
               "tags": "builder,python",
               "supports":"python:2.7,python",
               "version": "2.7",
-              "sampleRepo": "https://github.com/openshift/django-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/django-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -357,12 +357,12 @@
             "name": "3.4",
             "annotations": {
               "openshift.io/display-name": "Python 3.4",
-              "description": "Build and run Python 3.4 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-python-container/blob/master/3.4/README.md.",
+              "description": "Build and run Python 3.4 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-python-container/blob/master/3.4/README.md.",
               "iconClass": "icon-python",
               "tags": "builder,python",
               "supports":"python:3.4,python",
               "version": "3.4",
-              "sampleRepo": "https://github.com/openshift/django-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/django-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -373,12 +373,12 @@
             "name": "3.5",
             "annotations": {
               "openshift.io/display-name": "Python 3.5",
-              "description": "Build and run Python 3.5 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-python-container/blob/master/3.5/README.md.",
+              "description": "Build and run Python 3.5 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/thedigitalgarage/s2i-python-container/blob/master/3.5/README.md.",
               "iconClass": "icon-python",
               "tags": "builder,python",
               "supports":"python:3.5,python",
               "version": "3.5",
-              "sampleRepo": "https://github.com/openshift/django-ex.git"
+              "sampleRepo": "https://github.com/thedigitalgarage/django-ex.git"
             },
             "from": {
               "kind": "DockerImage",
@@ -785,7 +785,7 @@
             "name": "latest",
             "annotations": {
               "openshift.io/display-name": "Jenkins (Latest)",
-              "description": "Provides a Jenkins server on CentOS 7. For more information about using this container image, including OpenShift considerations, see https://github.com/openshift/jenkins/blob/master/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Jenkins available on OpenShift, including major versions updates.",
+              "description": "Provides a Jenkins server on CentOS 7. For more information about using this container image, including OpenShift considerations, see https://github.com/thedigitalgarage/jenkins/blob/master/README.md.\n\nWARNING: By selecting this tag, your application will automatically update to use the latest version of Jenkins available on OpenShift, including major versions updates.",
               "iconClass": "icon-jenkins",
               "tags": "jenkins"
             },
@@ -798,7 +798,7 @@
             "name": "1",
             "annotations": {
               "openshift.io/display-name": "Jenkins 1.X",
-              "description": "Provides a Jenkins 1.X server on CentOS 7. For more information about using this container image, including OpenShift considerations, see https://github.com/openshift/jenkins/blob/master/README.md.",
+              "description": "Provides a Jenkins 1.X server on CentOS 7. For more information about using this container image, including OpenShift considerations, see https://github.com/thedigitalgarage/jenkins/blob/master/README.md.",
               "iconClass": "icon-jenkins",
               "tags": "jenkins",
               "version": "1.x"
@@ -812,7 +812,7 @@
             "name": "2",
             "annotations": {
               "openshift.io/display-name": "Jenkins 2.X",
-              "description": "Provides a Jenkins v2.x server on CentOS 7. For more information about using this container image, including OpenShift considerations, see https://github.com/openshift/jenkins/blob/master/README.md.",
+              "description": "Provides a Jenkins v2.x server on CentOS 7. For more information about using this container image, including OpenShift considerations, see https://github.com/thedigitalgarage/jenkins/blob/master/README.md.",
               "iconClass": "icon-jenkins",
               "tags": "jenkins",
               "version": "2.x"

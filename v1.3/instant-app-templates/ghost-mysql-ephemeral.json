@@ -1,0 +1,327 @@
+{
+    "apiVersion": "v1",
+    "kind": "Template",
+    "metadata": {
+        "annotations": {
+            "description": "This is an instant-app for the Ghost Blogging platform.",
+            "iconClass": "icon-nodejs",
+            "tags": "instant-app,ghost"
+        },
+        "name": "ghost-mysql-ephemeral-instant"
+    },
+    "objects": [
+        {
+            "apiVersion": "v1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "labels": {
+                    "app": "ghost"
+                },
+                "name": "${NAME}"
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "app": "ghost",
+                    "deploymentconfig": "${NAME}"
+                },
+                "strategy": {
+                    "resources": {},
+                    "rollingParams": {
+                        "intervalSeconds": 1,
+                        "maxSurge": "25%",
+                        "maxUnavailable": "25%",
+                        "timeoutSeconds": 600,
+                        "updatePeriodSeconds": 1
+                    },
+                    "type": "Rolling"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "app": "ghost",
+                            "deploymentconfig": "${NAME}"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "GHOST_URL",
+                                        "value": "${APPLICATION_DOMAIN}"
+                                    },
+                                    {
+                                        "name": "MAIL_SERVICE",
+                                        "value": "${MAIL_SERVICE}"
+                                    },
+                                    {
+                                        "name": "MAIL_ACCOUNT",
+                                        "value": "${MAIL_ACCOUNT}"
+                                    },
+                                    {
+                                        "name": "MAIL_PWD",
+                                        "value": "${MAIL_PWD}"
+                                    },
+                                    {
+                                        "name": "MAIL_FROM",
+                                        "value": "${MAIL_FROM}"
+                                    },
+                                    {
+                                        "name": "MYSQL_SERVICE_HOST",
+                                        "value": "mysql"
+                                    },
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "value": "ghost"
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "value": "${DATABASE_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "MYSQL_DATABASE",
+                                        "value": "ghost"
+                                    }
+                                ],
+                                "image": "thedigitalgarage/dg-ghost-mysql-container:latest",
+                                "imagePullPolicy": "Always",
+                                "name": "ghost",
+                                "ports": [
+                                    {
+                                        "containerPort": 2368,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/var/lib/ghost",
+                                        "name": "ghost-volume-1"
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Always",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "emptyDir": {},
+                                "name": "ghost-volume-1"
+                            }
+                        ]
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    }
+                ]
+            },
+            "status": {}
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "annotations": {
+                    "description": "Defines how to deploy the mysql database"
+                },
+                "name": "mysql"
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "name": "mysql"
+                },
+                "strategy": {
+                    "type": "Recreate"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "name": "mysql"
+                        },
+                        "name": "mysql"
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "value": "ghost"
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "value": "${DATABASE_PASSWORD}"
+                                    },
+                                    {
+                                        "name": "MYSQL_DATABASE",
+                                        "value": "ghost"
+                                    }
+                                ],
+                                "image": "openshift/mysql-55-centos7",
+                                "name": "mysql",
+                                "ports": [
+                                    {
+                                        "containerPort": 3306
+                                    }
+                                ],
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/var/lib/mysql/data",
+                                        "name": "mysql-data"
+                                    }
+                                ]
+                            }
+                        ],
+                        "volumes": [
+                            {
+                                "name": "mysql-data",
+                                "emptyDir": {
+                                  "medium": ""
+                                }
+                            }
+                        ]
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Route",
+            "metadata": {
+                "labels": {
+                    "app": "ghost"
+                },
+                "name": "${NAME}"
+            },
+            "spec": {
+                "host": "${APPLICATION_DOMAIN}",
+                "port": {
+                    "targetPort": "2368-tcp"
+                },
+                "to": {
+                    "kind": "Service",
+                    "name": "${NAME}"
+                }
+            },
+            "status": {}
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {"service.alpha.openshift.io/dependencies": "[{\"name\":\"mysql\",\"namespace\":\"\",\"kind\":\"Service\"}]"},
+                "labels": {
+                    "app": "ghost"
+                },
+                "name": "${NAME}"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "2368-tcp",
+                        "port": 2368,
+                        "protocol": "TCP",
+                        "targetPort": 2368
+                    }
+                ],
+                "selector": {
+                    "app": "ghost",
+                    "deploymentconfig": "${NAME}"
+                },
+                "sessionAffinity": "None",
+                "type": "ClusterIP"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {
+                    "description": "Exposes the database server"
+                },
+                "name": "mysql"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "mysql",
+                        "port": 3306,
+                        "targetPort": 3306
+                    }
+                ],
+                "selector": {
+                    "name": "mysql"
+                }
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "description": "The name assigned to all of the frontend objects defined in this template.",
+            "displayName": "Name",
+            "name": "NAME",
+            "value": "ghost"
+        },
+        {
+            "description": "The exposed hostname that will route to the Ghost blogging service (e.g, <project_name>-ghost.apps.thedigitalgarage.io).",
+            "displayName": "Application Hostname",
+            "name": "APPLICATION_DOMAIN",
+            "value": ""
+        },
+        {
+            "description": "The hostname to set up email server for the Ghost blogging service, if left blank a value will be ignored.",
+            "displayName": "Mail Hostname",
+            "name": "MAIL_HOST"
+        },
+        {
+          "description": "STMP service name",
+          "displayName": "Mail service",
+          "name": "MAIL_SERVICE",
+          "value": "Gmail"
+        },
+        {
+          "description": "STMP account name",
+          "displayName": "Mail account",
+          "name": "MAIL_ACCOUNT",
+          "value": "example@gmail.com"
+        },
+        {
+          "description": "STMP account name",
+          "displayName": "Mail password",
+          "name": "MAIL_PWD",
+          "value": "ex4mpl3"
+        },
+        {
+          "description": "STMP FROM account",
+          "displayName": "FROM Mail account",
+          "name": "MAIL_FROM",
+          "value": "example@gmail.com"
+        },
+        {
+            "description": "Database user password",
+            "from": "[a-zA-Z0-9]{16}",
+            "generate": "expression",
+            "name": "DATABASE_PASSWORD"
+        },
+        {
+            "description": "The sender to set up email server for the Ghost blogging service, if left blank a value will be ignored.",
+            "displayName": "Mail Sender",
+            "name": "MAIL_FROM"
+        }
+    ]
+}

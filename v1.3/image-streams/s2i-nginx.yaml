@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ImageStream
 metadata:
-  name: sti-nginx
+  name: nginx
 spec:
   tags:
   - annotations:
