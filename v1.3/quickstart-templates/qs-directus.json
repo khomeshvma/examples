@@ -1,0 +1,254 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "qs-directus",
+        "creationTimestamp": null,
+        "annotations": {
+            "app.generate.openshift.io/warnings": "not all docker-compose fields were honored:\n* directus,mysql: restart is ignored - all pods are automatically restarted\n* mysql: no ports defined to send traffic to - no OpenShift service was created"
+        }
+    },
+    "objects": [
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "directus",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "tags": [
+                    {
+                        "name": "6.3",
+                        "annotations": {
+                            "openshift.io/imported-from": "getdirectus/directus:6.3"
+                        },
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "getdirectus/directus:6.3"
+                        },
+                        "generation": null,
+                        "importPolicy": {}
+                    }
+                ]
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "directus",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "strategy": {
+                    "resources": {}
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "directus"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "directus:6.3"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "deploymentconfig": "directus"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "deploymentconfig": "directus"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "directus",
+                                "image": "getdirectus/directus:6.3",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "MYSQL_ENV_MYSQL_DATABASE",
+                                        "value": "directus"
+                                    },
+                                    {
+                                        "name": "MYSQL_ENV_MYSQL_PASSWORD",
+                                        "value": "directus"
+                                    },
+                                    {
+                                        "name": "MYSQL_ENV_MYSQL_USER",
+                                        "value": "directus"
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "value": "directus"
+                                    },
+                                    {
+                                        "name": "MYSQL_PORT_3306_TCP_ADDR",
+                                        "value": "mysql"
+                                    },
+                                    {
+                                        "name": "MYSQL_PORT_3306_TCP_PORT",
+                                        "value": "3306"
+                                    },
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "value": "directus"
+                                    }
+                                ],
+                                "resources": {}
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {}
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mysql",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "tags": [
+                    {
+                        "name": "5.5",
+                        "annotations": {
+                            "openshift.io/imported-from": "mysql:5.5"
+                        },
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "mysql:5.5"
+                        },
+                        "generation": null,
+                        "importPolicy": {}
+                    }
+                ]
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mysql",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "strategy": {
+                    "resources": {}
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "mysql"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "name": "mysql:5.5"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "deploymentconfig": "mysql"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "deploymentconfig": "mysql"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "mysql",
+                                "image": "mysql:5.5",
+                                "env": [
+                                    {
+                                        "name": "MYSQL_DATABASE",
+                                        "value": "directus"
+                                    },
+                                    {
+                                        "name": "MYSQL_PASSWORD",
+                                        "value": "directus"
+                                    },
+                                    {
+                                        "name": "MYSQL_ROOT_PASSWORD",
+                                        "value": "password"
+                                    },
+                                    {
+                                        "name": "MYSQL_USER",
+                                        "value": "directus"
+                                    }
+                                ],
+                                "resources": {}
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {}
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "directus",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "8080-tcp",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "directus"
+                }
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
+    ],
+    "labels": {
+        "compose": "thedigitalgarage"
+    }
+}

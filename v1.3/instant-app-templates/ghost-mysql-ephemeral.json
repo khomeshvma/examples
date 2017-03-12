@@ -1,13 +1,14 @@
 {
-    "apiVersion": "v1",
     "kind": "Template",
+    "apiVersion": "v1",
     "metadata": {
+        "name": "ghost-mysql-ephemeral-instant",
+        "creationTimestamp": null,
         "annotations": {
             "description": "This is an instant-app for the Ghost Blogging platform.",
             "iconClass": "icon-nodejs",
             "tags": "instant-app,ghost"
-        },
-        "name": "ghost-mysql-ephemeral-instant"
+        }
     },
     "objects": [
         {
@@ -84,7 +85,7 @@
                                         "value": "ghost"
                                     }
                                 ],
-                                "image": "thedigitalgarage/dg-ghost-mysql-container:latest",
+                                "image": "thedigitalgarage/ghost-mysql:latest",
                                 "imagePullPolicy": "Always",
                                 "name": "ghost",
                                 "ports": [
@@ -181,10 +182,10 @@
                         ],
                         "volumes": [
                             {
-                                "name": "mysql-data",
                                 "emptyDir": {
-                                  "medium": ""
-                                }
+                                    "medium": ""
+                                },
+                                "name": "mysql-data"
                             }
                         ]
                     }
@@ -221,7 +222,9 @@
             "apiVersion": "v1",
             "kind": "Service",
             "metadata": {
-                "annotations": {"service.alpha.openshift.io/dependencies": "[{\"name\":\"mysql\",\"namespace\":\"\",\"kind\":\"Service\"}]"},
+                "annotations": {
+                    "service.alpha.openshift.io/dependencies": "[{\"name\":\"mysql\",\"namespace\":\"\",\"kind\":\"Service\"}]"
+                },
                 "labels": {
                     "app": "ghost"
                 },
@@ -272,56 +275,52 @@
     ],
     "parameters": [
         {
-            "description": "The name assigned to all of the frontend objects defined in this template.",
-            "displayName": "Name",
             "name": "NAME",
+            "displayName": "Name",
+            "description": "The name assigned to all of the frontend objects defined in this template.",
             "value": "ghost"
         },
         {
-            "description": "The exposed hostname that will route to the Ghost blogging service (e.g, <project_name>-ghost.apps.thedigitalgarage.io).",
-            "displayName": "Application Hostname",
             "name": "APPLICATION_DOMAIN",
-            "value": ""
+            "displayName": "Application Hostname",
+            "description": "The exposed hostname that will route to the Ghost blogging service (e.g, \u003cproject_name\u003e-ghost.apps.thedigitalgarage.io).",
+            "value": "",
+            "required": true
         },
         {
-            "description": "The hostname to set up email server for the Ghost blogging service, if left blank a value will be ignored.",
+            "name": "MAIL_HOST",
             "displayName": "Mail Hostname",
-            "name": "MAIL_HOST"
+            "description": "The hostname to set up email server for the Ghost blogging service, if left blank a value will be ignored."
         },
         {
-          "description": "STMP service name",
-          "displayName": "Mail service",
-          "name": "MAIL_SERVICE",
-          "value": "Gmail"
+            "name": "MAIL_SERVICE",
+            "displayName": "Mail service",
+            "description": "STMP service name",
+            "value": "Gmail"
         },
         {
-          "description": "STMP account name",
-          "displayName": "Mail account",
-          "name": "MAIL_ACCOUNT",
-          "value": "example@gmail.com"
+            "name": "MAIL_ACCOUNT",
+            "displayName": "Mail account",
+            "description": "STMP account name",
+            "value": "example@gmail.com"
         },
         {
-          "description": "STMP account name",
-          "displayName": "Mail password",
-          "name": "MAIL_PWD",
-          "value": "ex4mpl3"
+            "name": "MAIL_PWD",
+            "displayName": "Mail password",
+            "description": "STMP account password",
+            "value": "ex4mpl3"
         },
         {
-          "description": "STMP FROM account",
-          "displayName": "FROM Mail account",
-          "name": "MAIL_FROM",
-          "value": "example@gmail.com"
+            "name": "MAIL_FROM",
+            "displayName": "FROM Mail account",
+            "description": "STMP FROM account",
+            "value": "example@gmail.com"
         },
         {
+            "name": "DATABASE_PASSWORD",
             "description": "Database user password",
-            "from": "[a-zA-Z0-9]{16}",
             "generate": "expression",
-            "name": "DATABASE_PASSWORD"
-        },
-        {
-            "description": "The sender to set up email server for the Ghost blogging service, if left blank a value will be ignored.",
-            "displayName": "Mail Sender",
-            "name": "MAIL_FROM"
+            "from": "[a-zA-Z0-9]{16}"
         }
     ]
 }

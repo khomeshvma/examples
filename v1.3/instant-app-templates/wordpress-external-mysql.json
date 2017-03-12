@@ -1,0 +1,803 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "wp-external-mysql",
+        "creationTimestamp": null
+    },
+    "objects": [
+        {
+            "kind": "BuildConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wordpress-1",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp"
+                }
+            },
+            "spec": {
+                "triggers": [
+                    {
+                        "type": "GitHub",
+                        "github": {
+                            "secret": "Fwjls78LtlxNLbL3xrcJ"
+                        }
+                    },
+                    {
+                        "type": "Generic",
+                        "generic": {
+                            "secret": "R52xVRouHJs1FVFD2isZ"
+                        }
+                    },
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChange": {}
+                    }
+                ],
+                "runPolicy": "Serial",
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/Jianbo-Zhu/wordpress-1.git"
+                    },
+                    "contextDir": "php5.6/apache"
+                },
+                "strategy": {
+                    "type": "Docker",
+                    "dockerStrategy": {
+                        "from": {
+                            "kind": "ImageStreamTag",
+                            "name": "php:5.6-apache"
+                        }
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "wordpress-1:latest"
+                    }
+                },
+                "resources": {},
+                "postCommit": {}
+            },
+            "status": {
+                "lastVersion": 0
+            }
+        },
+        {
+            "kind": "Build",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wordpress-1-1",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1",
+                    "buildconfig": "wordpress-1",
+                    "openshift.io/build-config.name": "wordpress-1",
+                    "openshift.io/build.start-policy": "Serial"
+                },
+                "annotations": {
+                    "openshift.io/build-config.name": "wordpress-1",
+                    "openshift.io/build.number": "1",
+                    "openshift.io/build.pod-name": "wordpress-1-1-build"
+                }
+            },
+            "spec": {
+                "serviceAccount": "builder",
+                "source": {
+                    "type": "Git",
+                    "git": {
+                        "uri": "https://github.com/Jianbo-Zhu/wordpress-1.git"
+                    },
+                    "contextDir": "php5.6/apache"
+                },
+                "revision": {
+                    "type": "Git",
+                    "git": {
+                        "commit": "990e632f6358715c9e3a37456810fbcc547b0eaa",
+                        "author": {
+                            "name": "Jianbo-Zhu",
+                            "email": "lemurzjb@gmail.com"
+                        },
+                        "committer": {
+                            "name": "GitHub",
+                            "email": "noreply@github.com"
+                        },
+                        "message": "Update docker-entrypoint.sh"
+                    }
+                },
+                "strategy": {
+                    "type": "Docker",
+                    "dockerStrategy": {
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "php@sha256:905e7c8041f17643643e30a1955b13b357c2214be0b8b801426be293b7f253ec"
+                        }
+                    }
+                },
+                "output": {
+                    "to": {
+                        "kind": "ImageStreamTag",
+                        "name": "wordpress-1:latest"
+                    },
+                    "pushSecret": {
+                        "name": "builder-dockercfg-9n2fs"
+                    }
+                },
+                "resources": {},
+                "postCommit": {},
+                "triggeredBy": [
+                    {
+                        "message": "Image change",
+                        "imageChangeBuild": {
+                            "imageID": "php@sha256:905e7c8041f17643643e30a1955b13b357c2214be0b8b801426be293b7f253ec",
+                            "fromRef": {
+                                "kind": "ImageStreamTag",
+                                "name": "php:5.6-apache"
+                            }
+                        }
+                    }
+                ]
+            },
+            "status": {
+                "phase": "New",
+                "outputDockerImageReference": "172.30.44.155:5000/jianbo-test/wordpress-1:latest",
+                "config": {
+                    "name": "wordpress-1"
+                }
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "php",
+                "generation": 2,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp",
+                    "openshift.io/image.dockerRepositoryCheck": "2017-03-05T14:34:09Z"
+                }
+            },
+            "spec": {
+                "tags": [
+                    {
+                        "name": "5.6-apache",
+                        "annotations": {
+                            "openshift.io/imported-from": "php:5.6-apache"
+                        },
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "172.30.44.155:5000/jianbo-test/php:5.6-apache"
+                        },
+                        "generation": 2,
+                        "importPolicy": {}
+                    }
+                ]
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "kind": "ImageStream",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wordpress-1",
+                "generation": 1,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp"
+                }
+            },
+            "spec": {
+                "tags": [
+                    {
+                        "name": "latest",
+                        "annotations": null,
+                        "from": {
+                            "kind": "DockerImage",
+                            "name": "172.30.44.155:5000/jianbo-test/wordpress-1:latest"
+                        },
+                        "generation": null,
+                        "importPolicy": {}
+                    }
+                ]
+            },
+            "status": {
+                "dockerImageRepository": ""
+            }
+        },
+        {
+            "kind": "DeploymentConfig",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wordpress-1",
+                "generation": 2,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp"
+                }
+            },
+            "spec": {
+                "strategy": {
+                    "type": "Rolling",
+                    "rollingParams": {
+                        "updatePeriodSeconds": 1,
+                        "intervalSeconds": 1,
+                        "timeoutSeconds": 600,
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    },
+                    "resources": {}
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    },
+                    {
+                        "type": "ImageChange",
+                        "imageChangeParams": {
+                            "automatic": true,
+                            "containerNames": [
+                                "wordpress-1"
+                            ],
+                            "from": {
+                                "kind": "ImageStreamTag",
+                                "namespace": "jianbo-test",
+                                "name": "wordpress-1:latest"
+                            }
+                        }
+                    }
+                ],
+                "replicas": 1,
+                "test": false,
+                "selector": {
+                    "app": "wordpress-1",
+                    "deploymentconfig": "wordpress-1"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "wordpress-1",
+                            "deploymentconfig": "wordpress-1"
+                        },
+                        "annotations": {
+                            "openshift.io/container.wordpress-1.image.entrypoint": "[\"docker-php-entrypoint\",\"apache2-foreground\"]",
+                            "openshift.io/generated-by": "OpenShiftNewApp"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "wordpress-1",
+                                "image": "172.30.44.155:5000/jianbo-test/wordpress-1@sha256:35e747d032a47f2bf2099e1b7e9901460664721f25d80d03912b98e7c947b761",
+                                "ports": [
+                                    {
+                                        "containerPort": 80,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "WORDPRESS_DB_NAME",
+                                        "value": "test"
+                                    },
+                                    {
+                                        "name": "WORDPRESS_DB_PASSWORD",
+                                        "value": "test"
+                                    },
+                                    {
+                                        "name": "WORDPRESS_DB_USER",
+                                        "value": "test"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "observedGeneration": 2,
+                "replicas": 1,
+                "updatedReplicas": 1,
+                "availableReplicas": 1
+            }
+        },
+        {
+            "kind": "ReplicationController",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wordpress-1-1",
+                "generation": 1,
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1",
+                    "openshift.io/deployment-config.name": "wordpress-1"
+                },
+                "annotations": {
+                    "openshift.io/deployer-pod.name": "wordpress-1-1-deploy",
+                    "openshift.io/deployment-config.latest-version": "1",
+                    "openshift.io/deployment-config.name": "wordpress-1",
+                    "openshift.io/deployment.phase": "Complete",
+                    "openshift.io/deployment.replicas": "1",
+                    "openshift.io/deployment.status-reason": "caused by an image change",
+                    "openshift.io/encoded-deployment-config": "{\"kind\":\"DeploymentConfig\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"wordpress-1\",\"namespace\":\"jianbo-test\",\"selfLink\":\"/oapi/v1/namespaces/jianbo-test/deploymentconfigs/wordpress-1\",\"uid\":\"caec486f-01b0-11e7-8faf-2267ed127e16\",\"resourceVersion\":\"5274002\",\"generation\":2,\"creationTimestamp\":\"2017-03-05T14:34:08Z\",\"labels\":{\"app\":\"wordpress-1\"},\"annotations\":{\"openshift.io/generated-by\":\"OpenShiftNewApp\"}},\"spec\":{\"strategy\":{\"type\":\"Rolling\",\"rollingParams\":{\"updatePeriodSeconds\":1,\"intervalSeconds\":1,\"timeoutSeconds\":600,\"maxUnavailable\":\"25%\",\"maxSurge\":\"25%\"},\"resources\":{}},\"triggers\":[{\"type\":\"ConfigChange\"},{\"type\":\"ImageChange\",\"imageChangeParams\":{\"automatic\":true,\"containerNames\":[\"wordpress-1\"],\"from\":{\"kind\":\"ImageStreamTag\",\"namespace\":\"jianbo-test\",\"name\":\"wordpress-1:latest\"},\"lastTriggeredImage\":\"172.30.44.155:5000/jianbo-test/wordpress-1@sha256:35e747d032a47f2bf2099e1b7e9901460664721f25d80d03912b98e7c947b761\"}}],\"replicas\":1,\"test\":false,\"selector\":{\"app\":\"wordpress-1\",\"deploymentconfig\":\"wordpress-1\"},\"template\":{\"metadata\":{\"creationTimestamp\":null,\"labels\":{\"app\":\"wordpress-1\",\"deploymentconfig\":\"wordpress-1\"},\"annotations\":{\"openshift.io/container.wordpress-1.image.entrypoint\":\"[\\\"docker-php-entrypoint\\\",\\\"apache2-foreground\\\"]\",\"openshift.io/generated-by\":\"OpenShiftNewApp\"}},\"spec\":{\"containers\":[{\"name\":\"wordpress-1\",\"image\":\"172.30.44.155:5000/jianbo-test/wordpress-1@sha256:35e747d032a47f2bf2099e1b7e9901460664721f25d80d03912b98e7c947b761\",\"ports\":[{\"containerPort\":80,\"protocol\":\"TCP\"}],\"env\":[{\"name\":\"WORDPRESS_DB_NAME\",\"value\":\"test\"},{\"name\":\"WORDPRESS_DB_PASSWORD\",\"value\":\"test\"},{\"name\":\"WORDPRESS_DB_USER\",\"value\":\"test\"}],\"resources\":{},\"terminationMessagePath\":\"/dev/termination-log\",\"imagePullPolicy\":\"Always\"}],\"restartPolicy\":\"Always\",\"terminationGracePeriodSeconds\":30,\"dnsPolicy\":\"ClusterFirst\",\"securityContext\":{}}}},\"status\":{\"latestVersion\":1,\"observedGeneration\":2,\"details\":{\"message\":\"caused by an image change\",\"causes\":[{\"type\":\"ImageChange\",\"imageTrigger\":{\"from\":{\"kind\":\"ImageStreamTag\",\"namespace\":\"jianbo-test\",\"name\":\"wordpress-1:latest\"}}}]}}}\n"
+                }
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "app": "wordpress-1",
+                    "deployment": "wordpress-1-1",
+                    "deploymentconfig": "wordpress-1"
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "wordpress-1",
+                            "deployment": "wordpress-1-1",
+                            "deploymentconfig": "wordpress-1"
+                        },
+                        "annotations": {
+                            "openshift.io/container.wordpress-1.image.entrypoint": "[\"docker-php-entrypoint\",\"apache2-foreground\"]",
+                            "openshift.io/deployment-config.latest-version": "1",
+                            "openshift.io/deployment-config.name": "wordpress-1",
+                            "openshift.io/deployment.name": "wordpress-1-1",
+                            "openshift.io/generated-by": "OpenShiftNewApp"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "wordpress-1",
+                                "image": "172.30.44.155:5000/jianbo-test/wordpress-1@sha256:35e747d032a47f2bf2099e1b7e9901460664721f25d80d03912b98e7c947b761",
+                                "ports": [
+                                    {
+                                        "containerPort": 80,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "WORDPRESS_DB_NAME",
+                                        "value": "test"
+                                    },
+                                    {
+                                        "name": "WORDPRESS_DB_PASSWORD",
+                                        "value": "test"
+                                    },
+                                    {
+                                        "name": "WORDPRESS_DB_USER",
+                                        "value": "test"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "imagePullPolicy": "Always"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {}
+                    }
+                }
+            },
+            "status": {
+                "replicas": 0
+            }
+        },
+        {
+            "kind": "Route",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wordpress-1",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1"
+                },
+                "annotations": {
+                    "openshift.io/host.generated": "true"
+                }
+            },
+            "spec": {
+                "host": "wordpress-1-jianbo-test.apps.thedigitalgarage.io",
+                "to": {
+                    "kind": "Service",
+                    "name": "wordpress-1",
+                    "weight": 100
+                },
+                "port": {
+                    "targetPort": "80-tcp"
+                }
+            },
+            "status": {
+                "ingress": [
+                    {
+                        "host": "wordpress-1-jianbo-test.apps.thedigitalgarage.io",
+                        "routerName": "router",
+                        "conditions": [
+                            {
+                                "type": "Admitted",
+                                "status": "True",
+                                "lastTransitionTime": "2017-03-05T14:50:16Z"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "external-mysql-service",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "mysql",
+                        "protocol": "TCP",
+                        "port": 3306,
+                        "targetPort": 3306
+                    }
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wordpress-1",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1"
+                },
+                "annotations": {
+                    "openshift.io/generated-by": "OpenShiftNewApp"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "80-tcp",
+                        "protocol": "TCP",
+                        "port": 80,
+                        "targetPort": 80
+                    }
+                ],
+                "selector": {
+                    "app": "wordpress-1",
+                    "deploymentconfig": "wordpress-1"
+                },
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "network-diagnostic",
+                "creationTimestamp": null,
+                "annotations": {
+                    "openshift.io/scc": "restricted"
+                }
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "default-token-zftkt",
+                        "secret": {
+                            "secretName": "default-token-zftkt"
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "network-diagnostic",
+                        "image": "amouat/network-utils",
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "default-token-zftkt",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "capabilities": {
+                                "drop": [
+                                    "KILL",
+                                    "MKNOD",
+                                    "SETGID",
+                                    "SETUID",
+                                    "SYS_CHROOT"
+                                ]
+                            },
+                            "privileged": false,
+                            "seLinuxOptions": {
+                                "level": "s0:c12,c9"
+                            }
+                        },
+                        "stdin": true,
+                        "stdinOnce": true,
+                        "tty": true
+                    }
+                ],
+                "restartPolicy": "Never",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "host": "io-node1",
+                "serviceAccountName": "default",
+                "serviceAccount": "default",
+                "nodeName": "io-node1",
+                "securityContext": {
+                    "seLinuxOptions": {
+                        "level": "s0:c12,c9"
+                    },
+                    "fsGroup": 1000150000
+                },
+                "imagePullSecrets": [
+                    {
+                        "name": "default-dockercfg-1mctu"
+                    }
+                ]
+            },
+            "status": {
+                "phase": "Pending"
+            }
+        },
+        {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+                "generateName": "wordpress-1-1-",
+                "creationTimestamp": null,
+                "labels": {
+                    "app": "wordpress-1",
+                    "deployment": "wordpress-1-1",
+                    "deploymentconfig": "wordpress-1"
+                },
+                "annotations": {
+                    "kubernetes.io/created-by": "{\"kind\":\"SerializedReference\",\"apiVersion\":\"v1\",\"reference\":{\"kind\":\"ReplicationController\",\"namespace\":\"jianbo-test\",\"name\":\"wordpress-1-1\",\"uid\":\"9b2dd2d8-01b2-11e7-8faf-2267ed127e16\",\"apiVersion\":\"v1\",\"resourceVersion\":\"5274042\"}}\n",
+                    "openshift.io/container.wordpress-1.image.entrypoint": "[\"docker-php-entrypoint\",\"apache2-foreground\"]",
+                    "openshift.io/deployment-config.latest-version": "1",
+                    "openshift.io/deployment-config.name": "wordpress-1",
+                    "openshift.io/deployment.name": "wordpress-1-1",
+                    "openshift.io/generated-by": "OpenShiftNewApp",
+                    "openshift.io/scc": "restricted"
+                }
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "default-token-zftkt",
+                        "secret": {
+                            "secretName": "default-token-zftkt"
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "wordpress-1",
+                        "image": "172.30.44.155:5000/jianbo-test/wordpress-1@sha256:35e747d032a47f2bf2099e1b7e9901460664721f25d80d03912b98e7c947b761",
+                        "ports": [
+                            {
+                                "containerPort": 80,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "env": [
+                            {
+                                "name": "WORDPRESS_DB_NAME",
+                                "value": "test"
+                            },
+                            {
+                                "name": "WORDPRESS_DB_PASSWORD",
+                                "value": "test"
+                            },
+                            {
+                                "name": "WORDPRESS_DB_USER",
+                                "value": "test"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "default-token-zftkt",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "capabilities": {
+                                "drop": [
+                                    "KILL",
+                                    "MKNOD",
+                                    "SETGID",
+                                    "SETUID",
+                                    "SYS_CHROOT"
+                                ]
+                            },
+                            "privileged": false,
+                            "seLinuxOptions": {
+                                "level": "s0:c12,c9"
+                            }
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "host": "io-node2",
+                "serviceAccountName": "default",
+                "serviceAccount": "default",
+                "nodeName": "io-node2",
+                "securityContext": {
+                    "seLinuxOptions": {
+                        "level": "s0:c12,c9"
+                    },
+                    "fsGroup": 1000150000
+                },
+                "imagePullSecrets": [
+                    {
+                        "name": "default-dockercfg-1mctu"
+                    }
+                ]
+            },
+            "status": {
+                "phase": "Pending"
+            }
+        },
+        {
+            "kind": "Pod",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "wordpress-1-1-build",
+                "creationTimestamp": null,
+                "labels": {
+                    "openshift.io/build.name": "wordpress-1-1"
+                },
+                "annotations": {
+                    "openshift.io/build.name": "wordpress-1-1",
+                    "openshift.io/scc": "privileged"
+                }
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "docker-socket",
+                        "hostPath": {
+                            "path": "/var/run/docker.sock"
+                        }
+                    },
+                    {
+                        "name": "builder-dockercfg-9n2fs-push",
+                        "secret": {
+                            "secretName": "builder-dockercfg-9n2fs"
+                        }
+                    },
+                    {
+                        "name": "builder-token-mx5yq",
+                        "secret": {
+                            "secretName": "builder-token-mx5yq"
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "docker-build",
+                        "image": "openshift/origin-docker-builder:v1.3.1",
+                        "args": [
+                            "--loglevel=0"
+                        ],
+                        "env": [
+                            {
+                                "name": "BUILD",
+                                "value": "{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"wordpress-1-1\",\"namespace\":\"jianbo-test\",\"selfLink\":\"/oapi/v1/namespaces/jianbo-test/builds/wordpress-1-1\",\"uid\":\"cb2556e7-01b0-11e7-8faf-2267ed127e16\",\"resourceVersion\":\"5273344\",\"creationTimestamp\":\"2017-03-05T14:34:09Z\",\"labels\":{\"app\":\"wordpress-1\",\"buildconfig\":\"wordpress-1\",\"openshift.io/build-config.name\":\"wordpress-1\",\"openshift.io/build.start-policy\":\"Serial\"},\"annotations\":{\"openshift.io/build-config.name\":\"wordpress-1\",\"openshift.io/build.number\":\"1\"}},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"https://github.com/Jianbo-Zhu/wordpress-1.git\"},\"contextDir\":\"php5.6/apache\"},\"strategy\":{\"type\":\"Docker\",\"dockerStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"php@sha256:905e7c8041f17643643e30a1955b13b357c2214be0b8b801426be293b7f253ec\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"172.30.44.155:5000/jianbo-test/wordpress-1:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-9n2fs\"}},\"resources\":{},\"postCommit\":{},\"triggeredBy\":[{\"message\":\"Image change\",\"imageChangeBuild\":{\"imageID\":\"php@sha256:905e7c8041f17643643e30a1955b13b357c2214be0b8b801426be293b7f253ec\",\"fromRef\":{\"kind\":\"ImageStreamTag\",\"name\":\"php:5.6-apache\"}}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"172.30.44.155:5000/jianbo-test/wordpress-1:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"jianbo-test\",\"name\":\"wordpress-1\"}}}\n"
+                            },
+                            {
+                                "name": "SOURCE_REPOSITORY",
+                                "value": "https://github.com/Jianbo-Zhu/wordpress-1.git"
+                            },
+                            {
+                                "name": "SOURCE_URI",
+                                "value": "https://github.com/Jianbo-Zhu/wordpress-1.git"
+                            },
+                            {
+                                "name": "SOURCE_CONTEXT_DIR",
+                                "value": "php5.6/apache"
+                            },
+                            {
+                                "name": "ORIGIN_VERSION",
+                                "value": "v1.3.1"
+                            },
+                            {
+                                "name": "PUSH_DOCKERCFG_PATH",
+                                "value": "/var/run/secrets/openshift.io/push"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "docker-socket",
+                                "mountPath": "/var/run/docker.sock"
+                            },
+                            {
+                                "name": "builder-dockercfg-9n2fs-push",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/openshift.io/push"
+                            },
+                            {
+                                "name": "builder-token-mx5yq",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "privileged": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Never",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "host": "io-node2",
+                "serviceAccountName": "builder",
+                "serviceAccount": "builder",
+                "nodeName": "io-node2",
+                "securityContext": {},
+                "imagePullSecrets": [
+                    {
+                        "name": "builder-dockercfg-9n2fs"
+                    }
+                ]
+            },
+            "status": {
+                "phase": "Pending"
+            }
+        }
+    ]
+}
