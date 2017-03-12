@@ -5,7 +5,7 @@
         "name": "ghost-mysql-ephemeral-instant",
         "creationTimestamp": null,
         "annotations": {
-            "description": "This is an instant-app for the Ghost Blogging platform.",
+            "description": "This is an instant-app for the Ghost Blogging platform.\n\nWARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.",
             "iconClass": "icon-nodejs",
             "tags": "instant-app,ghost"
         }

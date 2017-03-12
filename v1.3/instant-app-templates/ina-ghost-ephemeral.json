@@ -5,7 +5,7 @@
         "name": "ghost-ephemeral-instant",
         "creationTimestamp": null,
         "annotations": {
-            "description": "This is an instant-app for the Ghost Blogging platform. This application uses the standard SQLite Datase. Any data stored in this application will be delete with a pod restart. This application should only be used for development and testing purposes.",
+            "description": "This is an instant-app for the Ghost Blogging platform. This application uses the standard SQLite Datase.\n\nWARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.",
             "iconClass": "icon-nodejs",
             "tags": "instant-app,ghost"
         }
