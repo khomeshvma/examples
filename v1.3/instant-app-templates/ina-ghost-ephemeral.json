@@ -1,0 +1,209 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "ghost-ephemeral-instant",
+        "creationTimestamp": null,
+        "annotations": {
+            "description": "This is an instant-app for the Ghost Blogging platform. This application uses the standard SQLite Datase. Any data stored in this application will be delete with a pod restart. This application should only be used for development and testing purposes.",
+            "iconClass": "icon-nodejs",
+            "tags": "instant-app,ghost"
+        }
+    },
+    "objects": [
+        {
+            "apiVersion": "v1",
+            "kind": "DeploymentConfig",
+            "metadata": {
+                "labels": {
+                    "app": "ghost"
+                },
+                "name": "${NAME}"
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "app": "ghost",
+                    "deploymentconfig": "${NAME}"
+                },
+                "strategy": {
+                    "resources": {},
+                    "rollingParams": {
+                        "intervalSeconds": 1,
+                        "maxSurge": "25%",
+                        "maxUnavailable": "25%",
+                        "timeoutSeconds": 600,
+                        "updatePeriodSeconds": 1
+                    },
+                    "type": "Rolling"
+                },
+                "template": {
+                    "metadata": {
+                        "labels": {
+                            "app": "ghost",
+                            "deploymentconfig": "${NAME}"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "GHOST_URL",
+                                        "value": "${APPLICATION_DOMAIN}"
+                                    },
+                                    {
+                                        "name": "MAIL_SERVICE",
+                                        "value": "${MAIL_SERVICE}"
+                                    },
+                                    {
+                                        "name": "MAIL_ACCOUNT",
+                                        "value": "${MAIL_ACCOUNT}"
+                                    },
+                                    {
+                                        "name": "MAIL_PWD",
+                                        "value": "${MAIL_PWD}"
+                                    },
+                                    {
+                                        "name": "MAIL_FROM",
+                                        "value": "${MAIL_FROM}"
+                                    }
+                                ],
+                                "image": "thedigitalgarage/ghost:latest",
+                                "imagePullPolicy": "Always",
+                                "name": "ghost",
+                                "ports": [
+                                    {
+                                        "containerPort": 2368,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/var/lib/ghost",
+                                        "name": "ghost-volume-1"
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "restartPolicy": "Always",
+                        "securityContext": {},
+                        "terminationGracePeriodSeconds": 30,
+                        "volumes": [
+                            {
+                                "emptyDir": {},
+                                "name": "ghost-volume-1"
+                            }
+                        ]
+                    }
+                },
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    }
+                ]
+            },
+            "status": {}
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Route",
+            "metadata": {
+                "labels": {
+                    "app": "ghost"
+                },
+                "name": "${NAME}"
+            },
+            "spec": {
+                "host": "${APPLICATION_DOMAIN}",
+                "port": {
+                    "targetPort": "2368-tcp"
+                },
+                "to": {
+                    "kind": "Service",
+                    "name": "${NAME}"
+                }
+            },
+            "status": {}
+        },
+        {
+            "apiVersion": "v1",
+            "kind": "Service",
+            "metadata": {
+                "annotations": {
+                    "service.alpha.openshift.io/dependencies": "[{\"name\":\"mysql\",\"namespace\":\"\",\"kind\":\"Service\"}]"
+                },
+                "labels": {
+                    "app": "ghost"
+                },
+                "name": "${NAME}"
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "2368-tcp",
+                        "port": 2368,
+                        "protocol": "TCP",
+                        "targetPort": 2368
+                    }
+                ],
+                "selector": {
+                    "app": "ghost",
+                    "deploymentconfig": "${NAME}"
+                },
+                "sessionAffinity": "None",
+                "type": "ClusterIP"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
+    ],
+    "parameters": [
+        {
+            "name": "NAME",
+            "displayName": "Name",
+            "description": "The name assigned to all of the frontend objects defined in this template.",
+            "value": "ghost"
+        },
+        {
+            "name": "APPLICATION_DOMAIN",
+            "displayName": "Application Hostname",
+            "description": "The exposed hostname that will route to the Ghost blogging service (e.g, \u003cproject_name\u003e-ghost.apps.thedigitalgarage.io).",
+            "value": "",
+            "required": true
+        },
+        {
+            "name": "MAIL_HOST",
+            "displayName": "Mail Hostname",
+            "description": "The hostname to set up email server for the Ghost blogging service, if left blank a value will be ignored."
+        },
+        {
+            "name": "MAIL_SERVICE",
+            "displayName": "Mail service",
+            "description": "STMP service name",
+            "value": "Gmail"
+        },
+        {
+            "name": "MAIL_ACCOUNT",
+            "displayName": "Mail account",
+            "description": "STMP account name",
+            "value": "example@gmail.com"
+        },
+        {
+            "name": "MAIL_PWD",
+            "displayName": "Mail password",
+            "description": "STMP account password",
+            "value": "ex4mpl3"
+        },
+        {
+            "name": "MAIL_FROM",
+            "displayName": "FROM Mail account",
+            "description": "STMP FROM account",
+            "value": "example@gmail.com"
+        }
+    ]
+}
