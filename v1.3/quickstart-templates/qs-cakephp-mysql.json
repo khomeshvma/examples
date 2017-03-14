@@ -2,17 +2,21 @@
   "kind": "Template",
   "apiVersion": "v1",
   "metadata": {
-    "name": "cakephp-mysql-example",
+    "name": "qs-cakephp-mysql",
     "annotations": {
       "openshift.io/display-name": "CakePHP + MySQL (Ephemeral)",
       "description": "An example CakePHP application with a MySQL database. For more information about using this template, including OpenShift considerations, see https://github.com/openshift/cakephp-ex/blob/master/README.md.\n\nWARNING: Any data stored will be lost upon pod destruction. Only use this template for testing.",
       "tags": "quickstart,php,cakephp",
-      "iconClass": "icon-php"
+      "iconClass": "icon-php",
+      "template.openshift.io/long-description": "This template defines resources needed to develop a CakePHP application, including a build configuration, application deployment configuration, and database deployment configuration.  The database is stored in non-persistent storage, so this configuration should be used for experimental purposes only.",
+      "template.openshift.io/provider-display-name": "Red Hat, Inc.",
+      "template.openshift.io/documentation-url": "https://github.com/openshift/cakephp-ex",
+      "template.openshift.io/support-url": "https://access.redhat.com"
     }
   },
   "message": "The following service(s) have been created in your project: ${NAME}, ${DATABASE_SERVICE_NAME}.\n\nFor more information about using this template, including OpenShift considerations, see https://github.com/openshift/cake-ex/blob/master/README.md.",
   "labels": {
-    "template": "cakephp-mysql-example"
+    "template": "qs-cakephp-mysql"
   },
   "objects": [
     {
@@ -22,8 +26,11 @@
         "name": "${NAME}"
       },
       "stringData" : {
-        "databaseUser" : "${DATABASE_USER}",
-        "databasePassword" : "${DATABASE_PASSWORD}"
+        "database-user" : "${DATABASE_USER}",
+        "database-password" : "${DATABASE_PASSWORD}",
+        "cakephp-secret-token" : "${CAKEPHP_SECRET_TOKEN}",
+        "cakephp-security-salt" : "${CAKEPHP_SECURITY_SALT}",
+        "cakephp-security-cipher-seed" : "${CAKEPHP_SECURITY_CIPHER_SEED}"
       }
     },
     {
@@ -96,13 +103,13 @@
           "sourceStrategy": {
             "from": {
               "kind": "ImageStreamTag",
-              "namespace": "${NAMESPACE}",
-              "name": "php:5.6"
+              "namespace": "openshift",
+              "name": "php:7.0"
             },
             "env":  [
               {
-                  "name": "COMPOSER_MIRROR",
-                  "value": "${COMPOSER_MIRROR}"
+                "name": "COMPOSER_MIRROR",
+                "value": "${COMPOSER_MIRROR}"
               }
             ]
           }
@@ -126,7 +133,10 @@
               "secret": "${GITHUB_WEBHOOK_SECRET}"
             }
           }
-        ]
+        ],
+        "postCommit": {
+          "script": "./lib/Cake/Console/cake test app AllTests"
+        }
       }
     },
     {
@@ -148,7 +158,7 @@
                 "command": [
                   "./migrate-database.sh"
                 ],
-                "containerName": "cakephp-mysql-example"
+                "containerName": "qs-cakephp-mysql"
               }
             }
           }
@@ -159,7 +169,7 @@
             "imageChangeParams": {
               "automatic": true,
               "containerNames": [
-                "cakephp-mysql-example"
+                "qs-cakephp-mysql"
               ],
               "from": {
                 "kind": "ImageStreamTag",
@@ -185,7 +195,7 @@
           "spec": {
             "containers": [
               {
-                "name": "cakephp-mysql-example",
+                "name": "qs-cakephp-mysql",
                 "image": " ",
                 "ports": [
                   {
@@ -201,12 +211,12 @@
                   }
                 },
                 "livenessProbe": {
-                    "timeoutSeconds": 3,
-                    "initialDelaySeconds": 30,
-                    "httpGet": {
-                        "path": "/",
-                        "port": 8080
-                    }
+                  "timeoutSeconds": 3,
+                  "initialDelaySeconds": 30,
+                  "httpGet": {
+                    "path": "/",
+                    "port": 8080
+                  }
                 },
                 "env": [
                   {
@@ -226,7 +236,7 @@
                     "valueFrom": {
                       "secretKeyRef" : {
                         "name" : "${NAME}",
-                        "key" : "databaseUser"
+                        "key" : "database-user"
                       }
                     }
                   },
@@ -235,21 +245,36 @@
                     "valueFrom": {
                       "secretKeyRef" : {
                         "name" : "${NAME}",
-                        "key" : "databasePassword"
+                        "key" : "database-password"
                       }
                     }
                   },
                   {
                     "name": "CAKEPHP_SECRET_TOKEN",
-                    "value": "${CAKEPHP_SECRET_TOKEN}"
+                    "valueFrom": {
+                      "secretKeyRef" : {
+                        "name" : "${NAME}",
+                        "key" : "cakephp-secret-token"
+                      }
+                    }
                   },
                   {
                     "name": "CAKEPHP_SECURITY_SALT",
-                    "value": "${CAKEPHP_SECURITY_SALT}"
+                    "valueFrom": {
+                      "secretKeyRef" : {
+                        "name" : "${NAME}",
+                        "key" : "cakephp-security-salt"
+                      }
+                    }
                   },
                   {
                     "name": "CAKEPHP_SECURITY_CIPHER_SEED",
-                    "value": "${CAKEPHP_SECURITY_CIPHER_SEED}"
+                    "valueFrom": {
+                      "secretKeyRef" : {
+                        "name" : "${NAME}",
+                        "key" : "cakephp-security-cipher-seed"
+                      }
+                    }
                   },
                   {
                     "name": "OPCACHE_REVALIDATE_FREQ",
@@ -257,9 +282,9 @@
                   }
                 ],
                 "resources": {
-		    "limits": {
-			"memory": "${MEMORY_LIMIT}"
-		    }
+                  "limits": {
+                    "memory": "${MEMORY_LIMIT}"
+                  }
                 }
               }
             ]
@@ -312,8 +337,8 @@
               ],
               "from": {
                 "kind": "ImageStreamTag",
-                "namespace": "${NAMESPACE}",
-                "name": "mysql:5.6"
+                "namespace": "openshift",
+                "name": "mysql:5.7"
               }
             }
           },
@@ -362,40 +387,40 @@
                   }
                 },
                 "livenessProbe": {
-                    "timeoutSeconds": 1,
-                    "initialDelaySeconds": 30,
-                    "tcpSocket": {
-                        "port": 3306
-                    }
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 30,
+                  "tcpSocket": {
+                    "port": 3306
+                  }
                 },
                 "env": [
-                    {
-                      "name": "MYSQL_USER",
-                      "valueFrom": {
-                        "secretKeyRef" : {
-                          "name" : "${NAME}",
-                          "key" : "databaseUser"
-                        }
+                  {
+                    "name": "MYSQL_USER",
+                    "valueFrom": {
+                      "secretKeyRef" : {
+                        "name" : "${NAME}",
+                        "key" : "database-user"
                       }
-                    },
-                    {
-                      "name": "MYSQL_PASSWORD",
-                      "valueFrom": {
-                        "secretKeyRef" : {
-                          "name" : "${NAME}",
-                          "key" : "databasePassword"
-                          }
-                        }
-                    },
-                    {
-                        "name": "MYSQL_DATABASE",
-                        "value": "${DATABASE_NAME}"
                     }
+                  },
+                  {
+                    "name": "MYSQL_PASSWORD",
+                    "valueFrom": {
+                      "secretKeyRef" : {
+                        "name" : "${NAME}",
+                        "key" : "database-password"
+                      }
+                    }
+                  },
+                  {
+                    "name": "MYSQL_DATABASE",
+                    "value": "${DATABASE_NAME}"
+                  }
                 ],
                 "resources": {
-                    "limits": {
-                        "memory": "${MEMORY_MYSQL_LIMIT}"
-                    }
+                  "limits": {
+                    "memory": "${MEMORY_MYSQL_LIMIT}"
+                  }
                 }
               }
             ]
@@ -410,35 +435,28 @@
       "displayName": "Name",
       "description": "The name assigned to all of the frontend objects defined in this template.",
       "required": true,
-      "value": "cakephp-mysql-example"
-    },
-    {
-      "name": "NAMESPACE",
-      "displayName": "Namespace",
-      "description": "The OpenShift Namespace where the ImageStream resides.",
-      "required": true,
-      "value": "openshift"
+      "value": "qs-cakephp-mysql"
     },
     {
       "name": "MEMORY_LIMIT",
       "displayName": "Memory Limit",
       "description": "Maximum amount of memory the CakePHP container can use.",
       "required": true,
-      "value": "512Mi"
+      "value": "192Mi"
     },
     {
       "name": "MEMORY_MYSQL_LIMIT",
       "displayName": "Memory Limit (MySQL)",
       "description": "Maximum amount of memory the MySQL container can use.",
       "required": true,
-      "value": "512Mi"
+      "value": "192Mi"
     },
     {
       "name": "SOURCE_REPOSITORY_URL",
       "displayName": "Git Repository URL",
       "description": "The URL of the repository with your application source code.",
+      "value": "https://github.com/thedigitalgarage/cakephp-ex.git"
       "required": true,
-      "value": "https://github.com/openshift/cakephp-ex.git"
     },
     {
       "name": "SOURCE_REPOSITORY_REF",
