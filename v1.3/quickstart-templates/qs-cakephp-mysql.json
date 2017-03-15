@@ -233,48 +233,23 @@
                   },
                   {
                     "name": "DATABASE_USER",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "database-user"
-                      }
-                    }
+                    "value": "${DATABASE_USER}"
                   },
                   {
                     "name": "DATABASE_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "database-password"
-                      }
-                    }
+                    "value": "${DATABASE_PASSWORD}"
                   },
                   {
                     "name": "CAKEPHP_SECRET_TOKEN",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "cakephp-secret-token"
-                      }
-                    }
+                    "value": "${CAKEPHP_SECRET_TOKEN}"
                   },
                   {
                     "name": "CAKEPHP_SECURITY_SALT",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "cakephp-security-salt"
-                      }
-                    }
+                    "value": "${CAKEPHP_SECURITY_SALT}"
                   },
                   {
                     "name": "CAKEPHP_SECURITY_CIPHER_SEED",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "cakephp-security-cipher-seed"
-                      }
-                    }
+                    "valueFrom": "${CAKEPHP_SECURITY_CIPHER_SEED}"
                   },
                   {
                     "name": "OPCACHE_REVALIDATE_FREQ",
