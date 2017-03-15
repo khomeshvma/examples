@@ -9,7 +9,6 @@
       "tags": "quickstart,php,cakephp",
       "iconClass": "icon-php",
       "template.openshift.io/long-description": "This template defines resources needed to develop a CakePHP application, including a build configuration, application deployment configuration, and database deployment configuration.  The database is stored in non-persistent storage, so this configuration should be used for experimental purposes only.",
-      "template.openshift.io/provider-display-name": "Red Hat, Inc.",
       "template.openshift.io/documentation-url": "https://github.com/openshift/cakephp-ex",
       "template.openshift.io/support-url": "https://access.redhat.com"
     }
@@ -19,20 +18,6 @@
     "template": "qs-cakephp-mysql"
   },
   "objects": [
-    {
-      "kind": "Secret",
-      "apiVersion": "v1",
-      "metadata": {
-        "name": "${NAME}"
-      },
-      "stringData" : {
-        "database-user" : "${DATABASE_USER}",
-        "database-password" : "${DATABASE_PASSWORD}",
-        "cakephp-secret-token" : "${CAKEPHP_SECRET_TOKEN}",
-        "cakephp-security-salt" : "${CAKEPHP_SECURITY_SALT}",
-        "cakephp-security-cipher-seed" : "${CAKEPHP_SECURITY_CIPHER_SEED}"
-      }
-    },
     {
       "kind": "Service",
       "apiVersion": "v1",
@@ -371,21 +356,11 @@
                 "env": [
                   {
                     "name": "MYSQL_USER",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "database-user"
-                      }
-                    }
+                    "value": "${MYSQL_USER}"
                   },
                   {
                     "name": "MYSQL_PASSWORD",
-                    "valueFrom": {
-                      "secretKeyRef" : {
-                        "name" : "${NAME}",
-                        "key" : "database-password"
-                      }
-                    }
+                    "value": "${MYSQL_PASSWORD}"
                   },
                   {
                     "name": "MYSQL_DATABASE",
