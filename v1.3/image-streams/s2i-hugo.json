@@ -17,8 +17,7 @@
                   "openshift.io/display-name": "Hugo (Latest)",
                   "sampleRepo": "https://github.com/thedigitalgarage/hugo-ex.git",
                   "supports": "hugo:019,hugo",
-                  "tags": "builder,hugo,jamstack,go",
-
+                  "tags": "builder,hugo,jamstack,go"
               },
               "from": {
                   "kind": "ImageStreamTag",
@@ -27,18 +26,20 @@
           },
           {
                 "name": "0.19",
-                "annotations": null,
+                "annotations": {
+                    "description": "Hugo static site generator",
+                    "iconClass": "icon-go",
+                    "openshift.io/display-name": "Hugo v0.19",
+                    "sampleRepo": "https://github.com/thedigitalgarage/hugo-ex.git",
+                    "supports": "hugo:019,hugo",
+                    "tags": "builder,hugo,jamstack,go"
+                  },
                 "from": {
                     "kind": "DockerImage",
                     "name": "thedigitalgarage/sti-hugo019-alpine:latest",
                     "version": "0.19"
-                },
-                "generation": 2,
-                "importPolicy": {}
+                }
             }
         ]
-    },
-    "status": {
-        "dockerImageRepository": ""
     }
 }
