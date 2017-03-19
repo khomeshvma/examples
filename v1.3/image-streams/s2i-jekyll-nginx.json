@@ -1,0 +1,30 @@
+{
+    "kind": "ImageStream",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "jekyll-nginx",
+        "annotations": {
+          "openshift.io/display-name": "Jekyll and NGINX"
+        }
+    },
+    "spec": {
+        "tags": [
+          {
+              "name": "latest",
+              "annotations": {
+                  "description": "Jekyll static site generator served by NGINX v1.8",
+                  "iconClass": "icon-nginx",
+                  "openshift.io/display-name": "Jekyll (Latest)",
+                  "sampleRepo": "https://github.com/johnmccawley/jekyll-ex.git",
+                  "supports": "jekyll",
+                  "tags": "builder,jekyll,jamstack"
+              },
+              "from": {
+                  "kind": "DockerImage",
+                  "name": "jmccawley/s2i-jekyll-nginx-18-centos7:latest",
+                  "version": "latest"
+              }
+           }
+        ]
+    }
+}
