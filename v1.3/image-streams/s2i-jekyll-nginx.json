@@ -21,7 +21,7 @@
               },
               "from": {
                   "kind": "DockerImage",
-                  "name": "thedigitalgarage/sti-nginx110-centos7:latest",
+                  "name": "thedigitalgarage/sti-jekyll-nginx18-centos7:latest",
                   "version": "latest"
               }
            }
