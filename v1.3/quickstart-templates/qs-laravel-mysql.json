@@ -123,7 +123,7 @@
         "type": "Rolling",
         "recreateParams": {
           "pre": {
-            "failurePolicy": "Retry",
+            "failurePolicy": "Ignore",
             "execNewPod": {
               "command": [
                 "./migrate-database.sh"
