@@ -1,0 +1,69 @@
+{
+    "kind": "Template",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "db-ex-cloudsql",
+        "annotations": {
+            "openshift.io/display-name": "Google CloudSQL",
+            "description": "A Google hosted MySQL database service.",
+            "iconClass": "icon-mysql-database",
+            "tags": "database,mysql,cloudsql,external"
+        },
+        "creationTimestamp": null
+    },
+    "objects": [{
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${SERVICE_NAME}",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "ports": [{
+                    "name": "mysql",
+                    "protocol": "TCP",
+                    "port": 3306,
+                    "targetPort": 3306
+                }],
+                "type": "ClusterIP",
+                "sessionAffinity": "None"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "kind": "Endpoints",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "${SERVICE_NAME}",
+                "creationTimestamp": null
+            },
+            "subsets": [{
+                "addresses": [{
+                    "ip": "${GOOGLE_CLOUDSQL_IP_ADDRESS}"
+                }],
+                "ports": [{
+                    "name": "mysql",
+                    "port": 3306,
+                    "protocol": "TCP"
+                }]
+            }]
+        }
+    ],
+    "parameters": [{
+            "name": "GOOGLE_CLOUDSQL_IP_ADDRESS",
+            "displayName": "Google CloudSQL IP address",
+            "description": "The IPv4 address for Google CloudSQL (properties -> IPv4 address)",
+            "value": "104.154.221.64",
+            "required": true
+        },
+        {
+            "name": "SERVICE_NAME",
+            "displayName": "Service Name",
+            "description": "The name of the Kubernetes Sevice Instance that directs traffic to CloudSQL",
+            "value": "external-mysql-service",
+            "required": true
+        }
+    ]
+}
