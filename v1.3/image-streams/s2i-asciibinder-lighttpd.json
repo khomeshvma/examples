@@ -1,0 +1,30 @@
+{
+    "kind": "ImageStream",
+    "apiVersion": "v1",
+    "metadata": {
+        "name": "asciibinder",
+        "annotations": {
+          "openshift.io/display-name": "ASCIIBinder"
+        }
+    },
+    "spec": {
+        "tags": [
+          {
+              "name": "latest",
+              "annotations": {
+                  "description": "An ASCIIBinder Source-To-Image Builder with Lighttpd",
+                  "iconClass": "file-text-o",
+                  "openshift.io/display-name": "ASCIIBinder",
+                  "sampleRepo": "https://github.com/thedigitalgarage/docs-ex.git",
+                  "supports": "asciibinder",
+                  "tags": "builder,asciibinder,jamstack"
+              },
+              "from": {
+                  "kind": "DockerImage",
+                  "name": "thedigitalgarage/sti-asciibinder-lighttpd-centos7:latest",
+                  "version": "latest"
+              }
+           }
+        ]
+    }
+}

@@ -1,0 +1,1138 @@
+{
+  "kind": "Template",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "gitlab-ce",
+    "annotations": {
+      "iconClass": "fa fa-git",
+      "description": "GitLab. Collaboration and source control management: code, test, and deploy together!",
+      "tags": "instant-app,gitlab,VCS"
+    }
+  },
+  "labels": {
+    "createdBy": "gitlab-ce-template"
+  },
+  "parameters": [
+    {
+      "description": "The name for the application. The service will be named like the application.",
+      "displayName": "Application name.",
+      "name": "APPLICATION_NAME",
+      "value": "gitlab",
+      "required": true
+    },
+    {
+      "description": "Unique storage ID for Host Storage",
+      "displayName": "Storage ID.",
+      "name": "STORAGE_ID",
+      "generate": "expression",
+      "from": "gitlab[a-z0-9]{8}",
+      "required": true
+    },
+    {
+      "description": "Custom hostname for service routes.",
+      "displayName": "Gitlab instance hostname",
+      "name": "APPLICATION_HOSTNAME",
+      "generate": "expression",
+      "from": "[a-z0-9]{5}.tanukionline.com",
+      "required": true
+    },
+    {
+      "description": "Custom hostname for mattermost routes.",
+      "displayName": "Mattermost instance hostname",
+      "name": "MATTERMOST_HOSTNAME",
+      "generate": "expression",
+      "from": "[a-z0-9]{5}.tanukionline.com",
+      "required": true
+    },
+    {
+      "name": "GITLAB_ROOT_PASSWORD",
+      "displayName": "GitLab Root User Password",
+      "description": "Password for the GitLab 'root' user. Must be at least 8 characters long. Leave blank if you would rather configure the password using the website during first use."
+    },
+    {
+      "name": "MAX_RUNNERS",
+      "displayName": "Max concurrent GitLab Runners",
+      "description": "The maximum number of runners that can be running at one time.",
+      "value": "20"
+    },
+    {
+      "name": "POSTGRESQL_USER",
+      "displayName": "PostgreSQL User",
+      "description": "Username for PostgreSQL user that will be used for accessing the database.",
+      "generate": "expression",
+      "from": "user[A-Z0-9]{3}",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_PASSWORD",
+      "displayName": "PostgreSQL Password",
+      "description": "Password for the PostgreSQL user.",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_ADMIN_PASSWORD",
+      "displayName": "PostgreSQL Admin User Password",
+      "description": "Password for the PostgreSQL Admin user.",
+      "generate": "expression",
+      "from": "[a-zA-Z0-9]{16}",
+      "required": true
+    },
+    {
+      "name": "POSTGRESQL_DATABASE",
+      "displayName": "PostgreSQL Database Name",
+      "description": "Name of the PostgreSQL database accessed.",
+      "value": "gitlabhq_production",
+      "required": true
+    },
+    {
+      "description": "Volume size for /etc",
+      "displayName": "/etc/gitlab volume size",
+      "name": "ETC_VOL_SIZE",
+      "value": "100Mi"
+    },
+    {
+      "description": "Volume size for GitLab data",
+      "displayName": "GitLab data volume size",
+      "name": "GITLAB_DATA_VOL_SIZE",
+      "value": "5Gi"
+    },
+    {
+      "description": "Volume size for postgresql data",
+      "displayName": "postgresql volume size",
+      "name": "POSTGRESQL_VOL_SIZE",
+      "value": "2Gi"
+    },
+    {
+      "description": "Volume size for redis data",
+      "displayName": "redis volume size",
+      "name": "REDIS_VOL_SIZE",
+      "value": "512Mi"
+    },
+    {
+      "description": "Generated using [a-z0-9]{16}",
+      "displayName": "Shared Runner Registration Token",
+      "name": "RUNNER_REGISTRATION_TOKEN",
+      "generate": "expression",
+      "from": "[a-z0-9]{16}",
+      "required": true
+    },
+    {
+      "description": "Generated using [a-z0-9]{16}",
+      "displayName": "OAuth uid for Mattermost-GitLab integration",
+      "name": "MATTERMOST_APP_UID",
+      "generate": "expression",
+      "from": "[a-z0-9]{16}",
+      "required": true
+    },
+    {
+      "description": "Generated using [a-z0-9]{16}",
+      "displayName": "OAuth secret for Mattermost-GitLab integration",
+      "name": "MATTERMOST_APP_SECRET",
+      "generate": "expression",
+      "from": "[a-z0-9]{16}",
+      "required": true
+    }
+  ],
+  "objects": [
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "tags": [
+          {
+            "name": "8.13.0",
+            "from": {
+              "kind": "DockerImage",
+              "name": "ayufan/gitlab-i2p:latest"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-redis",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "tags": [
+          {
+            "name": "3.2.3",
+            "from": {
+              "kind": "DockerImage",
+              "name": "redis:3.2.3-alpine"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "ImageStream",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-runner",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "tags": [
+          {
+            "name": "1.7.0",
+            "from": {
+              "kind": "DockerImage",
+              "name": "gitlab/gitlab-runner:alpine-v1.7.0-rc.2"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "ServiceAccount",
+        "apiVersion": "v1",
+        "metadata": {
+            "name": "${APPLICATION_NAME}-runner"
+        }
+    },
+    {
+      "kind": "RoleBinding",
+      "apiVersion": "v1",
+      "metadata": {
+          "name": "${APPLICATION_NAME}_edit"
+      },
+      "groupNames": null,
+      "subjects": [
+          {
+              "kind": "ServiceAccount",
+              "name": "${APPLICATION_NAME}-runner"
+          }
+      ],
+      "roleRef": {
+          "name": "edit"
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-runner",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "recreateParams": {},
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "gitlab-runner"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "${APPLICATION_NAME}-runner:1.7.0"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "${APPLICATION_NAME}",
+          "deploymentconfig": "${APPLICATION_NAME}-runner"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "${APPLICATION_NAME}",
+              "deploymentconfig": "${APPLICATION_NAME}-runner"
+            },
+            "annotations": {
+              "pod.alpha.kubernetes.io/init-containers": "[{\"name\": \"gitlab-runner-wait\",\"image\": \"centos:centos7\",\"command\": [\"/bin/sh\", \"-c\", \"until $(curl --output /dev/null --silent --head --fail http://${APPLICATION_NAME}/help); do printf '.'; sleep 5; done\"]}]"
+            }
+          },
+          "spec": {
+            "volumes": [],
+            "containers": [
+              {
+                "name": "gitlab-runner",
+                "image": "gitlab-runner",
+                "command": [
+                  "/bin/sh",
+                  "-c",
+                  "printf '%s\n\n' 'concurrent = ${MAX_RUNNERS}' > /etc/gitlab-runner/config.toml; /usr/bin/dumb-init /entrypoint register --non-interactive -u http://${APPLICATION_NAME}/ci -r '${RUNNER_REGISTRATION_TOKEN}' --docker-image 'ruby:2.3' --executor kubernetes; /usr/bin/dumb-init /entrypoint run --user=gitlab-runner --working-directory=/home/gitlab-runner"
+                ],
+                "ports": [
+                  {
+                    "containerPort": 22,
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 80,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "KUBERNETES_NAMESPACE",
+                    "valueFrom": {
+                      "fieldRef": {
+                        "fieldPath": "metadata.namespace"
+                      }
+                    }
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "600m",
+                    "memory": "600Mi"
+                  },
+                  "requests": {
+                    "cpu": "100m",
+                    "memory": "300Mi"
+                  }
+                },
+                "volumeMounts": [
+                ],
+                "livenessProbe": {
+                  "exec": {
+                    "command": ["/usr/bin/pgrep","gitlab-ci-multi"]
+                  },
+                  "initialDelaySeconds": 60,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "readinessProbe": {
+                  "exec": {
+                    "command": ["/usr/bin/pgrep","gitlab-ci-multi"]
+                  },
+                  "initialDelaySeconds": 10,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent"
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst",
+            "serviceAccount": "${APPLICATION_NAME}-runner"
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "recreateParams": {},
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "gitlab-ce"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "${APPLICATION_NAME}:8.13.0"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "${APPLICATION_NAME}",
+          "deploymentconfig": "${APPLICATION_NAME}"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "${APPLICATION_NAME}",
+              "deploymentconfig": "${APPLICATION_NAME}"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "gitlab-ce-volume-1",
+                "persistentVolumeClaim": {
+                  "claimName": "${APPLICATION_NAME}-etc"
+                }
+              },
+              {
+                "name": "gitlab-ce-volume-2",
+                "persistentVolumeClaim": {
+                  "claimName": "${APPLICATION_NAME}-data"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "gitlab-ce",
+                "image": "gitlab-ce",
+                "ports": [
+                  {
+                    "containerPort": 22,
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 80,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "GITLAB_OMNIBUS_CONFIG",
+                    "value": "external_url 'http://${APPLICATION_HOSTNAME}/'; root_pass='${GITLAB_ROOT_PASSWORD}'; gitlab_rails['initial_root_password']=root_pass unless root_pass.to_s == ''; gitlab_rails['initial_shared_runners_registration_token'] = '${RUNNER_REGISTRATION_TOKEN}'; postgresql['enable']=false; gitlab_rails['db_host'] = '${APPLICATION_NAME}-postgresql'; gitlab_rails['db_password']='${POSTGRESQL_PASSWORD}'; gitlab_rails['db_username']='${POSTGRESQL_USER}'; gitlab_rails['db_database']='${POSTGRESQL_DATABASE}'; redis['enable'] = false; gitlab_rails['redis_host']='${APPLICATION_NAME}-redis'; unicorn['worker_processes'] = 2; manage_accounts['enable'] = true; manage_storage_directories['manage_etc'] = false; gitlab_shell['auth_file'] = '/gitlab-data/ssh/authorized_keys'; git_data_dir '/gitlab-data/git-data'; gitlab_rails['shared_path'] = '/gitlab-data/shared'; gitlab_rails['uploads_directory'] = '/gitlab-data/uploads'; gitlab_ci['builds_directory'] = '/gitlab-data/builds';"
+                  },
+                  {
+                    "name": "GITLAB_POST_RECONFIGURE_SCRIPT",
+                    "value": "( /opt/gitlab/bin/gitlab-rails runner -e production 'Doorkeeper::Application.where(uid: \"${MATTERMOST_APP_UID}\", secret: \"${MATTERMOST_APP_SECRET}\", redirect_uri: \"http://${MATTERMOST_HOSTNAME}/signup/gitlab/complete\\r\\nhttp://${MATTERMOST_HOSTNAME}/login/gitlab/complete\", name: \"GitLab Mattermost\").first_or_create;' )"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "4",
+                    "memory": "10Gi"
+                  },
+                  "requests": {
+                    "cpu": "1",
+                    "memory": "3Gi"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "gitlab-ce-volume-1",
+                    "mountPath": "/etc/gitlab"
+                  },
+                  {
+                    "name": "gitlab-ce-volume-2",
+                    "mountPath": "/gitlab-data"
+                  }
+                ],
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/help",
+                    "port": 80,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 120,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 20,
+                  "successThreshold": 1,
+                  "failureThreshold": 10
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/help",
+                    "port": 80,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 20,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 20,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent"
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst"
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-redis",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "recreateParams": {},
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "gitlab-ce-redis"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "${APPLICATION_NAME}-redis:3.2.3"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "${APPLICATION_NAME}",
+          "deploymentconfig": "${APPLICATION_NAME}-redis"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "${APPLICATION_NAME}",
+              "deploymentconfig": "${APPLICATION_NAME}-redis"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "gitlab-ce-volume-4",
+                "persistentVolumeClaim": {
+                  "claimName": "${APPLICATION_NAME}-redis-data"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "gitlab-ce-redis",
+                "image": "gitlab-ce-redis",
+                "ports": [
+                  {
+                    "containerPort": 6379,
+                    "protocol": "TCP"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "2",
+                    "memory": "1G"
+                  },
+                  "requests": {
+                    "cpu": "1",
+                    "memory": "512Mi"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "gitlab-ce-volume-4",
+                    "mountPath": "/data"
+                  }
+                ],
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent"
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst",
+            "securityContext": {
+              "runAsUser": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-postgresql",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "recreateParams": {
+            "post": {
+              "failurePolicy": "Abort",
+              "execNewPod": {
+                "containerName": "gitlab-ce-postgresql",
+                "command": [
+                  "/usr/bin/scl",
+                  "enable",
+                  "rh-postgresql94",
+                  "export PGPASSWORD='${POSTGRESQL_ADMIN_PASSWORD}'; psql -h '${APPLICATION_NAME}-postgresql' -U postgres -d ${POSTGRESQL_DATABASE} -c 'CREATE EXTENSION IF NOT EXISTS pg_trgm;'; createdb -h '${APPLICATION_NAME}-postgresql' -U postgres --owner '${POSTGRESQL_USER}' 'mattermost_production'"
+                ],
+                "env": [
+                  { "name": "HOME", "value": "/var/lib/pgsql" },
+                  { "name": "PGDATA", "value": "/var/lib/pgsql/data/userdata" },
+                  { "name": "CONTAINER_SCRIPTS_PATH", "value": "/usr/share/container-scripts/postgresql" }
+                ]
+              }
+            }
+          },
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "gitlab-ce-postgresql"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "postgresql:9.4",
+                "namespace": "openshift"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "${APPLICATION_NAME}",
+          "deploymentconfig": "${APPLICATION_NAME}-postgresql"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "${APPLICATION_NAME}",
+              "deploymentconfig": "${APPLICATION_NAME}-postgresql"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "gitlab-ce-volume-3",
+                "emptyDir": {
+                  "medium": ""
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "gitlab-ce-postgresql",
+                "image": "gitlab-ce-postgresql",
+                "ports": [
+                  {
+                    "containerPort": 5432,
+                    "protocol": "TCP"
+                  }
+                ],
+                "readinessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 20,
+                  "periodSeconds": 20,
+                  "successThreshold": 1,
+                  "failureThreshold": 10,
+                  "exec": {
+                    "command": [ "/bin/sh", "-i", "-c", "psql -h 127.0.0.1 -U $POSTGRESQL_USER -q -d $POSTGRESQL_DATABASE -c 'SELECT 1'"]
+                  }
+                },
+                "livenessProbe": {
+                  "timeoutSeconds": 1,
+                  "initialDelaySeconds": 60,
+                  "periodSeconds": 20,
+                  "successThreshold": 1,
+                  "failureThreshold": 10,
+                  "tcpSocket": {
+                    "port": 5432
+                  }
+                },
+                "env": [
+                  {
+                    "name": "POSTGRESQL_USER",
+                    "value": "${POSTGRESQL_USER}"
+                  },
+                  {
+                    "name": "POSTGRESQL_PASSWORD",
+                    "value": "${POSTGRESQL_PASSWORD}"
+                  },
+                  {
+                    "name": "POSTGRESQL_DATABASE",
+                    "value": "${POSTGRESQL_DATABASE}"
+                  },
+                  {
+                    "name": "POSTGRESQL_ADMIN_PASSWORD",
+                    "value": "${POSTGRESQL_ADMIN_PASSWORD}"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "512Mi"
+                  },
+                  "requests": {
+                    "cpu": "300m",
+                    "memory": "300Mi"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "gitlab-ce-volume-3",
+                    "mountPath": "/var/lib/pgsql/data"
+                  }
+                ],
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent"
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst"
+          }
+        }
+      }
+    },
+    {
+      "kind": "DeploymentConfig",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-mattermost",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "strategy": {
+          "type": "Recreate",
+          "recreateParams": {},
+          "resources": {}
+        },
+        "triggers": [
+          {
+            "type": "ConfigChange"
+          },
+          {
+            "type": "ImageChange",
+            "imageChangeParams": {
+              "automatic": true,
+              "containerNames": [
+                "mattermost"
+              ],
+              "from": {
+                "kind": "ImageStreamTag",
+                "name": "${APPLICATION_NAME}:8.13.0"
+              }
+            }
+          }
+        ],
+        "replicas": 1,
+        "test": false,
+        "selector": {
+          "app": "${APPLICATION_NAME}",
+          "deploymentconfig": "${APPLICATION_NAME}-mattermost"
+        },
+        "template": {
+          "metadata": {
+            "labels": {
+              "app": "${APPLICATION_NAME}",
+              "deploymentconfig": "${APPLICATION_NAME}-mattermost"
+            }
+          },
+          "spec": {
+            "volumes": [
+              {
+                "name": "gitlab-ce-volume-mattermost",
+                "persistentVolumeClaim": {
+                  "claimName": "${APPLICATION_NAME}-mattermost"
+                }
+              },
+              {
+                "name": "gitlab-ce-volume-mattermost-etc",
+                "persistentVolumeClaim": {
+                  "claimName": "${APPLICATION_NAME}-mattermost-etc"
+                }
+              }
+            ],
+            "containers": [
+              {
+                "name": "mattermost",
+                "image": "gitlab-ce",
+                "ports": [
+                  {
+                    "containerPort": 22,
+                    "protocol": "TCP"
+                  },
+                  {
+                    "containerPort": 80,
+                    "protocol": "TCP"
+                  }
+                ],
+                "env": [
+                  {
+                    "name": "GITLAB_OMNIBUS_CONFIG",
+                    "value": "external_url 'http://${APPLICATION_HOSTNAME}/'; mattermost_external_url 'http://${MATTERMOST_HOSTNAME}/'; gitlab_rails['enable']=false; unicorn['enable']=false; sidekiq['enable']=false; gitlab_workhorse['enable']=false; postgresql['enable']=false; gitlab_rails['db_host'] = '${APPLICATION_NAME}-postgresql'; gitlab_rails['db_password']='${POSTGRESQL_PASSWORD}'; gitlab_rails['db_username']='${POSTGRESQL_USER}'; gitlab_rails['db_database']='${POSTGRESQL_DATABASE}'; redis['enable'] = false; gitlab_rails['redis_host']='${APPLICATION_NAME}-redis'; mattermost['file_directory']='/gitlab-data/mattermost'; mattermost['sql_driver_name'] = 'postgres'; mattermost['sql_data_source'] = 'user=${POSTGRESQL_USER} host=${APPLICATION_NAME}-postgresql port=5432 dbname=mattermost_production password=${POSTGRESQL_PASSWORD} sslmode=disable'; mattermost['gitlab_enable']=true; mattermost['gitlab_secret']='${MATTERMOST_APP_SECRET}'; mattermost['gitlab_id']='${MATTERMOST_APP_UID}'; mattermost['gitlab_scope']=''; mattermost['gitlab_auth_endpoint']='http://${APPLICATION_HOSTNAME}/oauth/authorize'; mattermost['gitlab_token_endpoint']='http://${APPLICATION_HOSTNAME}/oauth/token'; mattermost['gitlab_user_api_endpoint']='http://${APPLICATION_HOSTNAME}/api/v3/user'"
+                  }
+                ],
+                "resources": {
+                  "limits": {
+                    "cpu": "1",
+                    "memory": "1Gi"
+                  },
+                  "requests": {
+                    "cpu": "300m",
+                    "memory": "500m"
+                  }
+                },
+                "volumeMounts": [
+                  {
+                    "name": "gitlab-ce-volume-mattermost",
+                    "mountPath": "/gitlab-data/mattermost"
+                  },
+                  {
+                    "name": "gitlab-ce-volume-mattermost-etc",
+                    "mountPath": "/etc/gitlab"
+                  }
+                ],
+                "livenessProbe": {
+                  "httpGet": {
+                    "path": "/",
+                    "port": 80,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 120,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 3
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/",
+                    "port": 80,
+                    "scheme": "HTTP"
+                  },
+                  "initialDelaySeconds": 20,
+                  "timeoutSeconds": 1,
+                  "periodSeconds": 10,
+                  "successThreshold": 1,
+                  "failureThreshold": 18
+                },
+                "terminationMessagePath": "/dev/termination-log",
+                "imagePullPolicy": "IfNotPresent"
+              }
+            ],
+            "restartPolicy": "Always",
+            "terminationGracePeriodSeconds": 30,
+            "dnsPolicy": "ClusterFirst"
+          }
+        }
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-mattermost",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "80-http",
+            "protocol": "TCP",
+            "port": 80,
+            "targetPort": 80
+          }
+        ],
+        "selector": {
+          "app": "${APPLICATION_NAME}",
+          "deploymentconfig": "${APPLICATION_NAME}-mattermost"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "22-ssh",
+            "protocol": "TCP",
+            "port": 22,
+            "targetPort": 22
+          },
+          {
+            "name": "80-http",
+            "protocol": "TCP",
+            "port": 80,
+            "targetPort": 80
+          }
+        ],
+        "selector": {
+          "app": "${APPLICATION_NAME}",
+          "deploymentconfig": "${APPLICATION_NAME}"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+      "kind": "Service",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-redis",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "ports": [
+          {
+            "name": "6379-redis",
+            "protocol": "TCP",
+            "port": 6379,
+            "targetPort": 6379
+          }
+        ],
+        "selector": {
+          "app": "${APPLICATION_NAME}",
+          "deploymentconfig": "${APPLICATION_NAME}-redis"
+        },
+        "type": "ClusterIP",
+        "sessionAffinity": "None"
+      }
+    },
+    {
+       "kind": "Service",
+       "apiVersion": "v1",
+       "metadata": {
+         "name": "${APPLICATION_NAME}-postgresql",
+         "labels": {
+           "app": "${APPLICATION_NAME}"
+         }
+       },
+       "spec": {
+         "ports": [
+           {
+             "name": "5432-postgresql",
+             "protocol": "TCP",
+             "port": 5432,
+             "targetPort": 5432
+           }
+         ],
+         "selector": {
+           "app": "${APPLICATION_NAME}",
+           "deploymentconfig": "${APPLICATION_NAME}-postgresql"
+         },
+         "type": "ClusterIP",
+         "sessionAffinity": "None"
+       }
+     },
+     {
+       "kind": "Service",
+       "apiVersion": "v1",
+       "metadata": {
+         "name": "${APPLICATION_NAME}-runner",
+         "labels": {
+           "app": "${APPLICATION_NAME}"
+         }
+       },
+       "spec": {
+         "ports": [
+           {
+             "name": "22-ssh",
+             "protocol": "TCP",
+             "port": 22,
+             "targetPort": 22
+           },
+           {
+             "name": "80-http",
+             "protocol": "TCP",
+             "port": 80,
+             "targetPort": 80
+           }
+         ],
+         "selector": {
+           "app": "${APPLICATION_NAME}",
+           "deploymentconfig": "${APPLICATION_NAME}-runner"
+         },
+         "type": "ClusterIP",
+         "sessionAffinity": "None"
+       }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "host": "${APPLICATION_HOSTNAME}",
+        "to": {
+          "kind": "Service",
+          "name": "${APPLICATION_NAME}"
+        },
+        "port": {
+          "targetPort": "80-http"
+        }
+      }
+    },
+    {
+      "kind": "Route",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-mattermost",
+        "labels": {
+          "app": "${APPLICATION_NAME}"
+        }
+      },
+      "spec": {
+        "host": "${MATTERMOST_HOSTNAME}",
+        "to": {
+          "kind": "Service",
+          "name": "${APPLICATION_NAME}-mattermost"
+        },
+        "port": {
+          "targetPort": "80-http"
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-redis-data"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${REDIS_VOL_SIZE}"
+          }
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-etc"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${ETC_VOL_SIZE}"
+          }
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-data"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${GITLAB_DATA_VOL_SIZE}"
+          }
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-mattermost"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${GITLAB_DATA_VOL_SIZE}"
+          }
+        }
+      }
+    },
+    {
+      "kind": "PersistentVolumeClaim",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "${APPLICATION_NAME}-mattermost-etc"
+      },
+      "spec": {
+        "accessModes": [
+          "ReadWriteOnce"
+        ],
+        "resources": {
+          "requests": {
+            "storage": "${ETC_VOL_SIZE}"
+          }
+        }
+      }
+    }
+  ]
+}

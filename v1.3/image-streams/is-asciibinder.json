@@ -1,0 +1,27 @@
+
+  {
+    "kind": "ImageStream",
+    "apiVersion": "v1",
+    "metadata": {
+      "name": "asciibinder-lighttpd-s2i"
+    },
+    "spec": {
+      "tags": [
+        {
+          "name": "latest",
+          "annotations": {
+            "description": "Asciibinder Lighttpd S2I image",
+            "iconClass": "file-text-o",
+            "tags": "builder,asciibinder",
+            "supports": "asciibinder:0.2",
+            "sampleRepo": "https://github.com/thedigitalgarage/digitalgarage-docs"
+          },
+          "from": {
+              "kind": "DockerImage",
+              "name": "thedigitalgarage/sti-asciibinder-lighttpd-centos7:latest",
+              "version": "latest"
+          }
+        }
+      ]
+    }
+  }
