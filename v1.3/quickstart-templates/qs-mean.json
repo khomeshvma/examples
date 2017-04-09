@@ -69,7 +69,7 @@
         "name": "${NAME}",
         "annotations": {
           "description": "Defines how to build the application"
-        }
+      }
       },
       "spec": {
         "source": {
@@ -77,6 +77,9 @@
           "git": {
             "uri": "${SOURCE_REPOSITORY_URL}",
             "ref": "${SOURCE_REPOSITORY_REF}"
+          },
+          "sourceSecret": {
+            "name": "my-secret"
           },
           "contextDir": "${CONTEXT_DIR}"
         },
