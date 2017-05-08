@@ -21,6 +21,7 @@
                 "name": "${NAME}"
             },
             "spec": {
+                "activeDeadlineSeconds": 300,
                 "replicas": 1,
                 "selector": {
                     "app": "ghost",
@@ -45,6 +46,7 @@
                         }
                     },
                     "spec": {
+                        "activeDeadlineSeconds": null,
                         "containers": [
                             {
                                 "env": [
@@ -134,6 +136,7 @@
                 "name": "mysql"
             },
             "spec": {
+                "activeDeadlineSeconds": 300,
                 "replicas": 1,
                 "selector": {
                     "name": "mysql"
@@ -149,6 +152,7 @@
                         "name": "mysql"
                     },
                     "spec": {
+                        "activeDeadlineSeconds": null,
                         "containers": [
                             {
                                 "env": [

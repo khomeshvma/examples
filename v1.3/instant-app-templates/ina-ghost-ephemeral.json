@@ -21,6 +21,7 @@
                 "name": "${NAME}"
             },
             "spec": {
+                "activeDeadlineSeconds": 300,
                 "replicas": 1,
                 "selector": {
                     "app": "ghost",
@@ -45,6 +46,7 @@
                         }
                     },
                     "spec": {
+                        "activeDeadlineSeconds": null,
                         "containers": [
                             {
                                 "env": [

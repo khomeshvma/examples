@@ -15,16 +15,6 @@
     "template": "qs-laravel-pgsql"
   },
   "objects": [{
-    "kind": "Secret",
-    "apiVersion": "v1",
-    "metadata": {
-      "name": "${NAME}"
-    },
-    "stringData" : {
-      "databaseUser" : "${DATABASE_USER}",
-      "databasePassword" : "${DATABASE_PASSWORD}"
-    }
-  }, {
     "kind": "Service",
     "apiVersion": "v1",
     "metadata": {
@@ -338,11 +328,7 @@
             },
             "env": [{
               "name": "POSTGRESQL_USER",
-              "valueFrom": {
-                "secretKeyRef" : {
-                  "name" : "${NAME}",
-                  "key" : "databaseUser"
-                }
+              "value": "${DATABASE_USER}"
               }
             }, {
               "name": "POSTGRESQL_PASSWORD",
