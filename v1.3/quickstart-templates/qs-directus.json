@@ -247,6 +247,29 @@
                 "loadBalancer": {}
             }
         }
+		{
+            "kind": "Service",
+            "apiVersion": "v1",
+            "metadata": {
+                "name": "mysql",
+                "creationTimestamp": null
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "3306-tcp",
+                        "port": 3306,
+                        "targetPort": 3306
+                    }
+                ],
+                "selector": {
+                    "deploymentconfig": "mysql"
+                }
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
     ],
     "labels": {
         "compose": "thedigitalgarage"
